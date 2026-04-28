@@ -103,13 +103,13 @@
         let currentCategory = 'הכל';
 
         const categoryNames = {
-            'הכל': 'הכל',
-            'Starters': 'ראשונות',
-            'burgers': 'המבורגרים',
-            'Main Course': 'כריכים ועיקריות',
-            'Cocktails': 'קוקטיילים',
-            'Drinks': 'שתייה'
-        };
+    'הכל': 'הכל',
+    'Starters': 'ראשונות',
+    'burgers': 'המבורגרים',
+    'Main Course': 'כריכים ועיקריות',
+    'Cocktails': 'קוקטיילים',
+    'Drinks': 'שתייה קלה'
+};
 
         async function loadMenu() {
             try {
@@ -121,14 +121,22 @@
         }
 
         function renderTabs() {
-            const container = document.getElementById('categories-container');
-            const categories = ['הכל', ...new Set(allItems.map(item => item.category))];
-            container.innerHTML = categories.map(cat => `
-                <button class="tab-button ${cat === currentCategory ? 'active' : ''}" onclick="window.setCategory('${cat}')">
-                    ${categoryNames[cat] || cat}
-                </button>
-            `).join('');
-        }
+    const container = document.getElementById('categories-container');
+    
+    // כאן אתה קובע את הסדר! (מימין לשמאל בגלל ה-RTL)
+    const preferredOrder = ['הכל', 'Starters', 'burgers', 'Main Course', 'Cocktails', 'Drinks'];
+    
+    // מסדרים את הקטגוריות לפי הרשימה שלנו
+    const categories = preferredOrder.filter(cat => 
+        cat === 'הכל' || allItems.some(item => item.category === cat)
+    );
+
+    container.innerHTML = categories.map(cat => `
+        <button class="tab-button ${cat === currentCategory ? 'active' : ''}" onclick="window.setCategory('${cat}')">
+            ${categoryNames[cat] || cat}
+        </button>
+    `).join('');
+}
 
         function renderMenu(items) {
             const container = document.getElementById('menu-container');
