@@ -7,48 +7,46 @@
     <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* צבעים מותאמים לוייב של בר/פאב */
-            --primary-color: #3b82f6; /* כחול מודרני */
-            --bg-color: #0f172a; /* כחול כהה עמוק */
+            --primary-color: #3b82f6; /* כחול בר מודרני */
+            --bg-color: #0f172a; /* כחול עמוק */
             --card-bg: #1e293b;
             --text-color: #f8fafc;
             --border-color: #334155;
-            --accent-orange: #fbbf24; /* לצבעי מחיר וכפתורים */
+            --accent-orange: #fbbf24; /* צבע זהב למחירים */
         }
 
-        body { font-family: 'Assistant', sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 0; overflow-x: hidden; }
+        body { font-family: 'Assistant', sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 0; }
 
-        /* Header */
-        .header { text-align: center; padding: 50px 20px; background: linear-gradient(rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.8)), url('https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=1000'); background-size: cover; background-position: center; border-bottom: 2px solid var(--primary-color); }
-        .header h1 { color: var(--text-color); font-size: 2.8rem; margin: 0; letter-spacing: 2px; }
-        .header p { color: var(--primary-color); font-weight: bold; margin-top: 5px; }
+        /* Header Section */
+        .header { text-align: center; padding: 60px 20px; background: linear-gradient(rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.8)), url('https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=1000'); background-size: cover; background-position: center; border-bottom: 3px solid var(--primary-color); }
+        .header h1 { font-size: 3rem; margin: 0; letter-spacing: 3px; font-weight: 800; }
+        .header p { color: var(--primary-color); font-weight: bold; margin-top: 8px; font-size: 1.1rem; }
 
-        /* Nav Section */
-        .nav-section { position: sticky; top: 0; background-color: rgba(15, 23, 42, 0.95); z-index: 1000; padding-top: 15px; border-bottom: 1px solid var(--border-color); backdrop-filter: blur(10px); }
-        .search-container { padding: 0 15px 15px 15px; }
-        .search-input { width: 100%; padding: 12px 15px; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; color: white; box-sizing: border-box; font-family: 'Assistant', sans-serif; }
+        /* Sticky Navigation */
+        .nav-section { position: sticky; top: 0; background-color: rgba(15, 23, 42, 0.95); z-index: 1000; padding: 15px 0; border-bottom: 1px solid var(--border-color); backdrop-filter: blur(10px); }
+        .search-container { padding: 0 15px 15px; }
+        .search-input { width: 100%; padding: 14px 20px; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 15px; color: white; box-sizing: border-box; font-family: inherit; font-size: 1rem; }
         
-        .tabs-container { display: flex; overflow-x: auto; gap: 10px; padding: 0 15px 15px 15px; scrollbar-width: none; }
-        .tab-button { padding: 8px 18px; background: var(--card-bg); border: 1px solid var(--border-color); color: white; border-radius: 20px; cursor: pointer; white-space: nowrap; transition: 0.3s; font-weight: 600; }
-        .tab-button.active { background: var(--primary-color); border-color: var(--primary-color); }
+        .tabs-container { display: flex; overflow-x: auto; gap: 12px; padding: 0 15px 5px; scrollbar-width: none; }
+        .tab-button { padding: 10px 22px; background: var(--card-bg); border: 1px solid var(--border-color); color: white; border-radius: 25px; cursor: pointer; white-space: nowrap; transition: 0.3s; font-weight: 700; }
+        .tab-button.active { background: var(--primary-color); border-color: var(--primary-color); box-shadow: 0 0 15px rgba(59, 130, 246, 0.3); }
 
         /* Menu Grid */
-        .menu-grid { padding: 20px; display: grid; gap: 15px; }
-        .menu-item { background-color: var(--card-bg); border-radius: 16px; overflow: hidden; display: flex; height: 120px; border: 1px solid var(--border-color); cursor: pointer; transition: 0.2s; }
-        .item-content { flex: 1; padding: 15px; display: flex; flex-direction: column; justify-content: space-between; }
-        .item-content h3 { margin: 0; font-size: 1.15rem; color: #fff; }
-        .item-content p { margin: 5px 0; color: #94a3b8; font-size: 0.85rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-        .item-price { font-weight: 800; color: var(--accent-orange); font-size: 1.1rem; }
-        .item-image { width: 120px; height: 120px; background-size: cover; background-position: center; background-color: #2d3748; }
+        .menu-grid { padding: 20px; display: grid; gap: 18px; }
+        .menu-item { background-color: var(--card-bg); border-radius: 20px; overflow: hidden; display: flex; height: 130px; border: 1px solid var(--border-color); cursor: pointer; transition: transform 0.2s; }
+        .menu-item:active { transform: scale(0.98); }
+        .item-content { flex: 1; padding: 18px; display: flex; flex-direction: column; justify-content: space-between; }
+        .item-content h3 { margin: 0; font-size: 1.2rem; color: #fff; }
+        .item-content p { margin: 6px 0; color: #94a3b8; font-size: 0.9rem; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .item-price { font-weight: 800; color: var(--accent-orange); font-size: 1.2rem; }
+        .item-image { width: 130px; height: 130px; background-size: cover; background-position: center; background-color: #2d3748; }
 
-        /* Review FAB */
-        .review-wrapper { position: fixed; bottom: 25px; left: 25px; display: flex; align-items: center; gap: 10px; z-index: 2000; cursor: pointer; }
-        .review-fab { background-color: var(--primary-color); width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4); }
-
-        /* Modals */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 3000; backdrop-filter: blur(5px); }
-        .modal-content { background: var(--card-bg); border-radius: 24px; width: 90%; max-width: 450px; position: relative; overflow: hidden; border: 1px solid var(--border-color); }
-        .close-btn { position: absolute; top: 15px; right: 15px; font-size: 24px; color: white; cursor: pointer; background: rgba(0,0,0,0.5); width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        /* Modal Styles */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; justify-content: center; align-items: center; z-index: 3000; backdrop-filter: blur(8px); }
+        .modal-content { background: var(--card-bg); border-radius: 30px; width: 90%; max-width: 450px; position: relative; overflow: hidden; border: 1px solid var(--border-color); }
+        .close-btn { position: absolute; top: 20px; right: 20px; font-size: 28px; color: white; cursor: pointer; background: rgba(0,0,0,0.5); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 10; }
+        
+        .review-fab { position: fixed; bottom: 30px; left: 30px; background-color: var(--primary-color); width: 65px; height: 65px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 1.8rem; box-shadow: 0 5px 20px rgba(59, 130, 246, 0.5); cursor: pointer; z-index: 2000; }
     </style>
 </head>
 <body>
@@ -60,37 +58,34 @@
 
     <div class="nav-section">
         <div class="search-container">
-            <input type="text" id="menu-search" class="search-input" placeholder="חפשו מנה או קוקטייל...">
+            <input type="text" id="menu-search" class="search-input" placeholder="חפשו מנה, קוקטייל או נשנוש...">
         </div>
         <div id="categories-container" class="tabs-container"></div>
     </div>
 
     <div id="menu-container" class="menu-grid"></div>
 
-    <div class="review-wrapper" onclick="window.openReviewModal()">
-        <div class="review-fab">⭐</div>
-    </div>
+    <div class="review-fab" onclick="alert('פיצ\'ר חוות דעת יופעל בקרוב!')">⭐</div>
 
     <div id="item-modal" class="modal-overlay" onclick="if(event.target == this) window.closeItemModal()">
         <div class="modal-content" onclick="event.stopPropagation()">
             <span class="close-btn" onclick="window.closeItemModal()">&times;</span>
-            <div id="modal-item-image" style="width:100%; height:250px; background-size:cover; background-position:center;"></div>
-            <div style="padding: 25px;">
+            <div id="modal-item-image" style="width:100%; height:280px; background-size:cover; background-position:center;"></div>
+            <div style="padding: 30px;">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                    <h2 id="modal-item-name" style="margin:0;"></h2>
-                    <span id="modal-item-price" style="font-size:1.5rem; font-weight:800; color:var(--accent-orange);"></span>
+                    <h2 id="modal-item-name" style="margin:0; font-size:1.8rem;"></h2>
+                    <span id="modal-item-price" style="font-size:1.8rem; font-weight:800; color:var(--accent-orange);"></span>
                 </div>
-                <p id="modal-item-desc" style="color:#94a3b8; line-height:1.6;"></p>
-                <button style="width:100%; padding:15px; background:var(--primary-color); border:none; border-radius:12px; color:white; font-weight:bold; margin-top:20px; cursor:pointer;" onclick="window.closeItemModal()">חזרה לתפריט</button>
+                <p id="modal-item-desc" style="color:#94a3b8; line-height:1.6; font-size:1.1rem;"></p>
+                <button style="width:100%; padding:18px; background:var(--primary-color); border:none; border-radius:15px; color:white; font-weight:800; font-size:1.1rem; margin-top:25px; cursor:pointer;" onclick="window.closeItemModal()">חזרה לתפריט</button>
             </div>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, getDocs, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // ה-Config החדש שלך שחר
         const firebaseConfig = {
             apiKey: "AIzaSyDYZxPjSML1gHTTANx0Fp6TlhI5_ookHNU",
             authDomain: "hevresbar.firebaseapp.com",
@@ -113,7 +108,7 @@
             'burgers': 'המבורגרים',
             'Main Course': 'כריכים ועיקריות',
             'Cocktails': 'קוקטיילים',
-            'Drinks': 'שתייה קלה'
+            'Drinks': 'שתייה'
         };
 
         async function loadMenu() {
@@ -122,7 +117,7 @@
                 allItems = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 renderTabs();
                 renderMenu(allItems);
-            } catch (e) { console.error(e); }
+            } catch (e) { console.error("Error loading menu:", e); }
         }
 
         function renderTabs() {
@@ -137,6 +132,10 @@
 
         function renderMenu(items) {
             const container = document.getElementById('menu-container');
+            if (items.length === 0) {
+                container.innerHTML = '<p style="text-align:center; color:#94a3b8;">לא נמצאו מנות תואמות...</p>';
+                return;
+            }
             container.innerHTML = items.map(item => `
                 <div class="menu-item" onclick="window.openItemDetails('${item.id}')">
                     <div class="item-content">
@@ -158,7 +157,8 @@
             const term = document.getElementById('menu-search').value.toLowerCase();
             const filtered = allItems.filter(i => {
                 const matchesCat = currentCategory === 'הכל' || i.category === currentCategory;
-                return matchesCat && i.name.toLowerCase().includes(term);
+                const matchesSearch = i.name.toLowerCase().includes(term) || (i.desc && i.desc.toLowerCase().includes(term));
+                return matchesCat && matchesSearch;
             });
             renderMenu(filtered);
         }
@@ -173,33 +173,14 @@
             document.getElementById('item-modal').style.display = 'flex';
         };
 
-        window.closeItemModal = () => document.getElementById('item-modal').style.display = 'none';
-
-        // סקריפט הזרקה - הרץ פעם אחת בלבד
-     async function seedHevresMenu() {
-    const menuData = {
-        "chips_regular": { name: "צ'יפס רגיל", price: 27, category: "Starters", desc: "צ'יפס קריספי / תוספת תיבול 3 ש''ח", imageUrl: "/img/chips_large.avif" },
-        "cauliflower": { name: "כרובית קריספית", price: 39, category: "Starters", desc: "כרובית בציפוי קריספי מוגש עם טחינה וצ'ילי מתוק", imageUrl: "/img/cauliflower.avif" },
-        "burger_classic": { name: "המבורגר קלאסי", price: 60, category: "burgers", desc: "קציצת אנטריקוט 200 גר', רוטב הבית, חסה, עגבנייה, בצל, חמוצים", imageUrl: "/img/burger_classic.avif" },
-        "asado_burger": { name: "המבורגר אסאדו מושחת", price: 75, category: "burgers", desc: "קציצת אנטריקוט 200 גר', נתחי אנטריקוט, אסאדו מתובל, בצל מטוגן", imageUrl: "/img/asado_frena.avif" },
-        "cocktail_tropical": { name: "גן טרופי", price: 45, category: "Cocktails", desc: "ליקר פסיפלורה, ליקר מלון, ליים, מיץ אננס, גרנדין", imageUrl: "/img/soda.avif" }
-    };
-
-    const { getFirestore, doc, setDoc } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js");
-    const db = getFirestore();
-
-    for (const [id, data] of Object.entries(menuData)) {
-        await setDoc(doc(db, "menu_hevres", id), data);
-        console.log(`Updated: ${id}`);
-    }
-    alert("התפריט עודכן עם שמות ברורים!");
-}
+        window.closeItemModal = () => {
+            document.getElementById('item-modal').style.display = 'none';
+        };
 
         document.getElementById('menu-search').addEventListener('input', applyFilters);
-        loadMenu();
         
-        // שחר, תוריד את ה-Comment מהשורה למטה פעם אחת ואז תחזיר
-        seedHevresMenu();
+        // טעינה ראשונית של המידע שהזנת ידנית
+        loadMenu();
 
     </script>
 </body>
