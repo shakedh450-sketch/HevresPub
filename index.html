@@ -176,28 +176,30 @@
         window.closeItemModal = () => document.getElementById('item-modal').style.display = 'none';
 
         // סקריפט הזרקה - הרץ פעם אחת בלבד
-        async function seedHevresMenu() {
-            const menuData = [
-                { name: "צ'יפס רגיל", price: 27, category: "Starters", desc: "צ'יפס קריספי / תוספת תיבול 3 ש''ח", imageUrl: "/img/chips_large.avif" },
-                { name: "כרובית קריספית", price: 39, category: "Starters", desc: "כרובית בציפוי קריספי מוגש עם טחינה וצ'ילי מתוק", imageUrl: "/img/cauliflower.avif" },
-                { name: "קרפצ'יו סינטה", price: 60, category: "Starters", desc: "פילה בקר, שמן זית, בלסמי, לימון, עלי בייבי", imageUrl: "/img/carpaccio.avif" },
-                { name: "המבורגר קלאסי", price: 60, category: "burgers", desc: "קציצת אנטריקוט 200 גר', רוטב הבית, חסה, עגבנייה, בצל, חמוצים", imageUrl: "/img/burger_classic.avif" },
-                { name: "המבורגר אסאדו מושחת", price: 75, category: "burgers", desc: "קציצת אנטריקוט 200 גר', נתחי אנטריקוט, אסאדו מתובל, בצל מטוגן", imageUrl: "/img/asado_frena.avif" },
-                { name: "כריך קצבים", price: 80, category: "Main Course", desc: "פרנה בתוספת נתחי אנטריקוט מובחרים, אסאדו מפורק, רוטב הבית", imageUrl: "/img/asado_frena.avif" },
-                { name: "גן טרופי", price: 45, category: "Cocktails", desc: "ליקר פסיפלורה, ליקר מלון, ליים, מיץ אננס, גרנדין", imageUrl: "/img/soda.avif" },
-                { name: "מרגריטה תות", price: 50, category: "Cocktails", desc: "טקילה, תותים קפואים, מיץ לימון, ליים", imageUrl: "/img/soda.avif" }
-            ];
-            for (const item of menuData) {
-                await addDoc(collection(db, "menu_hevres"), item);
-            }
-            alert("תפריט חברס הועלה!");
-        }
+     async function seedHevresMenu() {
+    const menuData = {
+        "chips_regular": { name: "צ'יפס רגיל", price: 27, category: "Starters", desc: "צ'יפס קריספי / תוספת תיבול 3 ש''ח", imageUrl: "/img/chips_large.avif" },
+        "cauliflower": { name: "כרובית קריספית", price: 39, category: "Starters", desc: "כרובית בציפוי קריספי מוגש עם טחינה וצ'ילי מתוק", imageUrl: "/img/cauliflower.avif" },
+        "burger_classic": { name: "המבורגר קלאסי", price: 60, category: "burgers", desc: "קציצת אנטריקוט 200 גר', רוטב הבית, חסה, עגבנייה, בצל, חמוצים", imageUrl: "/img/burger_classic.avif" },
+        "asado_burger": { name: "המבורגר אסאדו מושחת", price: 75, category: "burgers", desc: "קציצת אנטריקוט 200 גר', נתחי אנטריקוט, אסאדו מתובל, בצל מטוגן", imageUrl: "/img/asado_frena.avif" },
+        "cocktail_tropical": { name: "גן טרופי", price: 45, category: "Cocktails", desc: "ליקר פסיפלורה, ליקר מלון, ליים, מיץ אננס, גרנדין", imageUrl: "/img/soda.avif" }
+    };
+
+    const { getFirestore, doc, setDoc } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js");
+    const db = getFirestore();
+
+    for (const [id, data] of Object.entries(menuData)) {
+        await setDoc(doc(db, "menu_hevres", id), data);
+        console.log(`Updated: ${id}`);
+    }
+    alert("התפריט עודכן עם שמות ברורים!");
+}
 
         document.getElementById('menu-search').addEventListener('input', applyFilters);
         loadMenu();
         
         // שחר, תוריד את ה-Comment מהשורה למטה פעם אחת ואז תחזיר
-        // seedHevresMenu();
+        seedHevresMenu();
 
     </script>
 </body>
