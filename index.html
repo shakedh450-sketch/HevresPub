@@ -26,9 +26,8 @@
         .nav-section { position: sticky; top: 0; background-color: rgba(15, 23, 42, 0.95); z-index: 1000; padding: 15px 0; border-bottom: 1px solid var(--border-color); backdrop-filter: blur(10px); }
         .search-container { padding: 0 15px 15px; }
         .search-input { width: 100%; padding: 14px 20px; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 15px; color: white; box-sizing: border-box; font-family: inherit; font-size: 1rem; outline: none; }
-        .search-input:focus { border-color: var(--primary-color); }
         
-        .tabs-container { display: flex; overflow-x: auto; gap: 10px; padding: 0 15px 5px; scrollbar-width: none; -ms-overflow-style: none; }
+        .tabs-container { display: flex; overflow-x: auto; gap: 10px; padding: 0 15px 5px; scrollbar-width: none; flex-direction: row; }
         .tabs-container::-webkit-scrollbar { display: none; }
         .tab-button { padding: 10px 20px; background: var(--card-bg); border: 1px solid var(--border-color); color: white; border-radius: 25px; cursor: pointer; white-space: nowrap; transition: 0.3s; font-weight: 700; font-size: 0.95rem; }
         .tab-button.active { background: var(--primary-color); border-color: var(--primary-color); box-shadow: 0 0 15px rgba(59, 130, 246, 0.3); }
@@ -44,8 +43,7 @@
         .item-image { width: 120px; height: 130px; background-size: cover; background-position: center; background-color: #2d3748; }
 
         /* Review FAB */
-        .review-link { position: fixed; bottom: 30px; left: 30px; z-index: 2000; text-decoration: none; }
-        .review-fab { background-color: var(--primary-color); width: 65px; height: 65px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 1.8rem; box-shadow: 0 5px 20px rgba(59, 130, 246, 0.5); transition: 0.3s; }
+        .review-fab { position: fixed; bottom: 30px; left: 30px; background-color: var(--primary-color); width: 65px; height: 65px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 1.8rem; box-shadow: 0 5px 20px rgba(59, 130, 246, 0.5); cursor: pointer; z-index: 2000; transition: 0.3s; }
         .review-fab:active { transform: scale(0.9); }
 
         /* Modal */
@@ -70,9 +68,7 @@
 
     <div id="menu-container" class="menu-grid"></div>
 
-    <a href="https://search.google.com/local/writereview?placeid=ChIJ7ZiYNuRTHBURotvjTJOhuHs" target="_blank" class="review-link">
-        <div class="review-fab">⭐</div>
-    </a>
+    <div class="review-fab" onclick="window.open('https://search.google.com/local/writereview?placeid=ChIJ7ZiYNuRTHBURotvjTJOhuHs', '_blank')">⭐</div>
 
     <div id="item-modal" class="modal-overlay" onclick="if(event.target == this) window.closeItemModal()">
         <div class="modal-content" onclick="event.stopPropagation()">
@@ -112,7 +108,7 @@
             'הכל': 'הכל',
             'Starters': 'ראשונות',
             'burgers': 'המבורגרים',
-            'Main Course': 'כריכים ועיקריות',
+            'Main Course': 'עיקריות',
             'Cocktails': 'קוקטיילים',
             'Drinks': 'שתייה קלה'
         };
@@ -123,14 +119,16 @@
                 allItems = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 renderTabs();
                 renderMenu(allItems);
-            } catch (e) { console.error("Error:", e); }
+            } catch (e) { console.error("Error loading menu:", e); }
         }
 
         function renderTabs() {
             const container = document.getElementById('categories-container');
+            // הסדר המדויק שביקשת (מימין לשמאל)
             const preferredOrder = ['הכל', 'Starters', 'burgers', 'Main Course', 'Cocktails', 'Drinks'];
             
             container.innerHTML = preferredOrder.map(cat => {
+                // מציג רק קטגוריות שיש בהן מנות (או את 'הכל')
                 const hasItems = cat === 'הכל' || allItems.some(item => item.category === cat);
                 if (!hasItems) return '';
 
@@ -186,6 +184,8 @@
         };
 
         document.getElementById('menu-search').addEventListener('input', applyFilters);
+        
+        // רק טוען את המידע. אין כאן שום פונקציית Seed שמוסיפה נתונים!
         loadMenu();
 
     </script>
