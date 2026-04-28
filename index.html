@@ -7,46 +7,44 @@
     <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #3b82f6; /* כחול בר מודרני */
-            --bg-color: #0f172a; /* כחול עמוק */
+            --primary-color: #3b82f6;
+            --bg-color: #0f172a;
             --card-bg: #1e293b;
             --text-color: #f8fafc;
             --border-color: #334155;
-            --accent-orange: #fbbf24; /* צבע זהב למחירים */
+            --accent-orange: #fbbf24;
         }
 
-        body { font-family: 'Assistant', sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 0; }
+        body { font-family: 'Assistant', sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 0; overflow-x: hidden; }
 
-        /* Header Section */
-        .header { text-align: center; padding: 60px 20px; background: linear-gradient(rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.8)), url('https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=1000'); background-size: cover; background-position: center; border-bottom: 3px solid var(--primary-color); }
-        .header h1 { font-size: 3rem; margin: 0; letter-spacing: 3px; font-weight: 800; }
-        .header p { color: var(--primary-color); font-weight: bold; margin-top: 8px; font-size: 1.1rem; }
+        .header { text-align: center; padding: 60px 20px; background: linear-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.85)), url('https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=1000'); background-size: cover; background-position: center; border-bottom: 3px solid var(--primary-color); }
+        .header h1 { font-size: 3rem; margin: 0; letter-spacing: 2px; font-weight: 800; }
+        .header p { color: var(--primary-color); font-weight: bold; margin-top: 8px; }
 
-        /* Sticky Navigation */
         .nav-section { position: sticky; top: 0; background-color: rgba(15, 23, 42, 0.95); z-index: 1000; padding: 15px 0; border-bottom: 1px solid var(--border-color); backdrop-filter: blur(10px); }
         .search-container { padding: 0 15px 15px; }
-        .search-input { width: 100%; padding: 14px 20px; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 15px; color: white; box-sizing: border-box; font-family: inherit; font-size: 1rem; }
+        .search-input { width: 100%; padding: 14px 20px; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 15px; color: white; box-sizing: border-box; font-family: inherit; font-size: 1rem; outline: none; }
         
-        .tabs-container { display: flex; overflow-x: auto; gap: 12px; padding: 0 15px 5px; scrollbar-width: none; }
-        .tab-button { padding: 10px 22px; background: var(--card-bg); border: 1px solid var(--border-color); color: white; border-radius: 25px; cursor: pointer; white-space: nowrap; transition: 0.3s; font-weight: 700; }
+        .tabs-container { display: flex; overflow-x: auto; gap: 10px; padding: 0 15px 5px; scrollbar-width: none; }
+        .tabs-container::-webkit-scrollbar { display: none; }
+        .tab-button { padding: 10px 20px; background: var(--card-bg); border: 1px solid var(--border-color); color: white; border-radius: 25px; cursor: pointer; white-space: nowrap; transition: 0.3s; font-weight: 700; }
         .tab-button.active { background: var(--primary-color); border-color: var(--primary-color); box-shadow: 0 0 15px rgba(59, 130, 246, 0.3); }
 
-        /* Menu Grid */
-        .menu-grid { padding: 20px; display: grid; gap: 18px; }
+        .menu-grid { padding: 20px; display: grid; gap: 18px; max-width: 800px; margin: 0 auto; }
         .menu-item { background-color: var(--card-bg); border-radius: 20px; overflow: hidden; display: flex; height: 130px; border: 1px solid var(--border-color); cursor: pointer; transition: transform 0.2s; }
-        .menu-item:active { transform: scale(0.98); }
-        .item-content { flex: 1; padding: 18px; display: flex; flex-direction: column; justify-content: space-between; }
-        .item-content h3 { margin: 0; font-size: 1.2rem; color: #fff; }
-        .item-content p { margin: 6px 0; color: #94a3b8; font-size: 0.9rem; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .menu-item:active { transform: scale(0.97); }
+        .item-content { flex: 1; padding: 15px; display: flex; flex-direction: column; justify-content: space-between; text-align: right; }
+        .item-content h3 { margin: 0; font-size: 1.15rem; color: #fff; }
+        .item-content p { margin: 4px 0; color: #94a3b8; font-size: 0.85rem; line-height: 1.3; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
         .item-price { font-weight: 800; color: var(--accent-orange); font-size: 1.2rem; }
-        .item-image { width: 130px; height: 130px; background-size: cover; background-position: center; background-color: #2d3748; }
+        .item-image { width: 120px; height: 130px; background-size: cover; background-position: center; background-color: #2d3748; }
 
-        /* Modal Styles */
+        /* כפתור ביקורת גוגל */
+        .review-fab { position: fixed; bottom: 30px; left: 30px; background-color: var(--primary-color); width: 65px; height: 65px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 1.8rem; box-shadow: 0 5px 20px rgba(59, 130, 246, 0.5); cursor: pointer; z-index: 2000; text-decoration: none; color: white; }
+
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; justify-content: center; align-items: center; z-index: 3000; backdrop-filter: blur(8px); }
         .modal-content { background: var(--card-bg); border-radius: 30px; width: 90%; max-width: 450px; position: relative; overflow: hidden; border: 1px solid var(--border-color); }
         .close-btn { position: absolute; top: 20px; right: 20px; font-size: 28px; color: white; cursor: pointer; background: rgba(0,0,0,0.5); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 10; }
-        
-        .review-fab { position: fixed; bottom: 30px; left: 30px; background-color: var(--primary-color); width: 65px; height: 65px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 1.8rem; box-shadow: 0 5px 20px rgba(59, 130, 246, 0.5); cursor: pointer; z-index: 2000; }
     </style>
 </head>
 <body>
@@ -58,14 +56,14 @@
 
     <div class="nav-section">
         <div class="search-container">
-            <input type="text" id="menu-search" class="search-input" placeholder="חפשו מנה, קוקטייל או נשנוש...">
+            <input type="text" id="menu-search" class="search-input" placeholder="חפשו מנה או קוקטייל...">
         </div>
         <div id="categories-container" class="tabs-container"></div>
     </div>
 
     <div id="menu-container" class="menu-grid"></div>
 
-    <div class="review-fab" onclick="alert('פיצ\'ר חוות דעת יופעל בקרוב!')">⭐</div>
+    <a href="https://search.google.com/local/writereview?placeid=ChIJ7ZiYNuRTHBURotvjTJOhuHs" target="_blank" class="review-fab">⭐</a>
 
     <div id="item-modal" class="modal-overlay" onclick="if(event.target == this) window.closeItemModal()">
         <div class="modal-content" onclick="event.stopPropagation()">
@@ -73,10 +71,10 @@
             <div id="modal-item-image" style="width:100%; height:280px; background-size:cover; background-position:center;"></div>
             <div style="padding: 30px;">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                    <h2 id="modal-item-name" style="margin:0; font-size:1.8rem;"></h2>
-                    <span id="modal-item-price" style="font-size:1.8rem; font-weight:800; color:var(--accent-orange);"></span>
+                    <h2 id="modal-item-name" style="margin:0; font-size:1.7rem;"></h2>
+                    <span id="modal-item-price" style="font-size:1.7rem; font-weight:800; color:var(--accent-orange);"></span>
                 </div>
-                <p id="modal-item-desc" style="color:#94a3b8; line-height:1.6; font-size:1.1rem;"></p>
+                <p id="modal-item-desc" style="color:#94a3b8; line-height:1.6; font-size:1.05rem;"></p>
                 <button style="width:100%; padding:18px; background:var(--primary-color); border:none; border-radius:15px; color:white; font-weight:800; font-size:1.1rem; margin-top:25px; cursor:pointer;" onclick="window.closeItemModal()">חזרה לתפריט</button>
             </div>
         </div>
@@ -92,8 +90,7 @@
             projectId: "hevresbar",
             storageBucket: "hevresbar.firebasestorage.app",
             messagingSenderId: "737238391891",
-            appId: "1:737238391891:web:ad0076917e2f7133eb7aa6",
-            measurementId: "G-9N0H13L409"
+            appId: "1:737238391891:web:ad0076917e2f7133eb7aa6"
         };
 
         const app = initializeApp(firebaseConfig);
@@ -106,9 +103,9 @@
             'הכל': 'הכל',
             'Starters': 'ראשונות',
             'burgers': 'המבורגרים',
-            'Main Course': 'כריכים ועיקריות',
+            'Main Course': 'עיקריות',
             'Cocktails': 'קוקטיילים',
-            'Drinks': 'שתייה'
+            'Drinks': 'שתייה קלה'
         };
 
         async function loadMenu() {
@@ -117,25 +114,23 @@
                 allItems = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 renderTabs();
                 renderMenu(allItems);
-            } catch (e) { console.error("Error loading menu:", e); }
+            } catch (e) { console.error("Error:", e); }
         }
 
         function renderTabs() {
             const container = document.getElementById('categories-container');
-            const categories = ['הכל', ...new Set(allItems.map(item => item.category))];
-            container.innerHTML = categories.map(cat => `
-                <button class="tab-button ${cat === currentCategory ? 'active' : ''}" onclick="window.setCategory('${cat}')">
-                    ${categoryNames[cat] || cat}
-                </button>
-            `).join('');
+            // סדר קבוע מימין לשמאל
+            const preferredOrder = ['הכל', 'Starters', 'burgers', 'Main Course', 'Cocktails', 'Drinks'];
+            
+            container.innerHTML = preferredOrder.map(cat => {
+                const hasItems = cat === 'הכל' || allItems.some(item => item.category === cat);
+                if (!hasItems) return '';
+                return `<button class="tab-button ${cat === currentCategory ? 'active' : ''}" onclick="window.setCategory('${cat}')">${categoryNames[cat] || cat}</button>`;
+            }).join('');
         }
 
         function renderMenu(items) {
             const container = document.getElementById('menu-container');
-            if (items.length === 0) {
-                container.innerHTML = '<p style="text-align:center; color:#94a3b8;">לא נמצאו מנות תואמות...</p>';
-                return;
-            }
             container.innerHTML = items.map(item => `
                 <div class="menu-item" onclick="window.openItemDetails('${item.id}')">
                     <div class="item-content">
@@ -179,7 +174,7 @@
 
         document.getElementById('menu-search').addEventListener('input', applyFilters);
         
-        // טעינה ראשונית של המידע שהזנת ידנית
+        // טעינה בלבד! אין פקודות כתיבה כאן.
         loadMenu();
 
     </script>

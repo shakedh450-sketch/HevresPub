@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ניהול תפריט | Hevres Bar</title>
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Assistant', sans-serif; background: #0f172a; color: white; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .card { background: #1e293b; padding: 20px; border-radius: 15px; margin-bottom: 20px; border: 1px solid #334155; }
+        input, select, textarea { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #334155; background: #0f172a; color: white; box-sizing: border-box; }
+        button { background: #3b82f6; color: white; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; }
+        button.delete { background: #ef4444; padding: 5px 10px; width: auto; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { text-align: right; padding: 12px; border-bottom: 1px solid #334155; }
+        .stats { display: flex; justify-content: space-between; margin-bottom: 10px; color: #94a3b8; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ניהול תפריט חברס' 🛠️</h1>
+        
+        <div class="card">
+            <h3>הוספת מנה חדשה</h3>
+            <input type="text" id="name" placeholder="שם המנה (למשל: המבורגר קלאסי)">
+            <input type="number" id="price" placeholder="מחיר (בשקלים)">
+            <select id="category">
+                <option value="Starters">ראשונות</option>
+                <option value="burgers">המבורגרים</option>
+                <option value="Main Course">עיקריות</option>
+                <option value="Cocktails">קוקטיילים</option>
+                <option value="Drinks">שתייה קלה</option>
+            </select>
+            <textarea id="desc" placeholder="תיאור המנה"></textarea>
+            <input type="text" id="imageUrl" placeholder="נתיב תמונה (למשל: /img/burger.avif)">
+            <button onclick="addItem()">הוסף מנה לתפריט</button>
+        </div>
+
+        <div class="card">
+            <div class="stats">
+                <span id="item-count">טוען מנות...</span>
+                <button class="delete" onclick="clearAllMenu()">מחיקת כל התפריט (זהירות!)</button>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>שם</th>
+                        <th>מחיר</th>
+                        <th>קטגוריה</th>
+                        <th>פעולות</th>
+                    </tr>
+                </thead>
+                <tbody id="admin-table-body"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDYZxPjSML1gHTTANx0Fp6TlhI5_ookHNU",
+            authDomain: "hevresbar.firebaseapp.com",
+            projectId: "hevresbar",
+            storageBucket: "hevresbar.firebasestorage.app",
+            messagingSenderId: "737238391891",
+            appId: "1:737238391891:web:ad0076917e2f7133eb7aa6"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // טעינת המנות לטבלה
+        async function loadAdminMenu() {
+            const querySnapshot = await getDocs(collection(db, "menu_hevres"));
+            const tbody = document.getElementById('admin-table-body');
+            const countSpan = document.getElementById('item-count');
+            tbody.innerHTML = '';
+            
+            let count = 0;
+            querySnapshot.forEach((documentObj) => {
+                const item = documentObj.data();
+                const id = documentObj.id;
+                count++;
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${item.name}</td>
+                        <td>₪${item.price}</td>
+                        <td>${item.category}</td>
+                        <td><button class="delete" onclick="deleteItem('${id}')">מחק</button></td>
+                    </tr>
+                `;
+            });
+            countSpan.innerText = `סה"כ מנות: ${count}`;
+        }
+
+        // הוספת מנה
+        window.addItem = async () => {
+            const data = {
+                name: document.getElementById('name').value,
+                price: Number(document.getElementById('price').value),
+                category: document.getElementById('category').value,
+                desc: document.getElementById('desc').value,
+                imageUrl: document.getElementById('imageUrl').value
+            };
+
+            if(!data.name || !data.price) return alert("חובה למלא שם ומחיר");
+
+            try {
+                await addDoc(collection(db, "menu_hevres"), data);
+                alert("המנה נוספה בהצלחה!");
+                location.reload();
+            } catch (e) { alert("שגיאה בהוספה"); }
+        };
+
+        // מחיקת מנה בודדת
+        window.deleteItem = async (id) => {
+            if(confirm("בטוח שרוצה למחוק?")) {
+                await deleteDoc(doc(db, "menu_hevres", id));
+                loadAdminMenu();
+            }
+        };
+
+        // מחיקת כל התפריט (למקרה של כפילויות)
+        window.clearAllMenu = async () => {
+            if(confirm("זה ימחק את כל המנות בתפריט! להמשיך?")) {
+                const querySnapshot = await getDocs(collection(db, "menu_hevres"));
+                querySnapshot.forEach(async (documentObj) => {
+                    await deleteDoc(doc(db, "menu_hevres", documentObj.id));
+                });
+                alert("הכל נמחק. רענן את הדף.");
+                location.reload();
+            }
+        };
+
+        loadAdminMenu();
+    </script>
+</body>
+</html>
