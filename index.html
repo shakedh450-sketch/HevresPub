@@ -12,6 +12,7 @@
             --text: #f1f5f9;
             --primary: #3b82f6;
             --accent: #fbbf24;
+            --danger: #ef4444;
         }
 
         body {
@@ -23,12 +24,35 @@
             line-height: 1.6;
         }
 
+        /* באנר מבצעים */
+        .promo-banner {
+            background: var(--accent);
+            color: #000;
+            text-align: center;
+            padding: 10px;
+            font-weight: bold;
+            display: none;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
         header {
             text-align: center;
             padding: 40px 20px;
             background: linear-gradient(rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.8)), url('https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&q=80');
             background-size: cover;
             background-position: center;
+        }
+
+        .kitchen-status-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin-top: 10px;
+            font-weight: bold;
         }
 
         .container { max-width: 800px; margin: 0 auto; padding: 20px; }
@@ -42,6 +66,7 @@
             background: var(--card);
             color: white;
             font-size: 1rem;
+            outline: none;
         }
 
         .categories-container {
@@ -78,7 +103,12 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            transition: 0.3s;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .item-info h3 { margin: 0 0 5px 0; font-size: 1.2rem; }
@@ -88,9 +118,12 @@
 </head>
 <body>
 
+<div id="promoBanner" class="promo-banner"></div>
+
 <header>
     <h1>HEVRES BAR</h1>
-    <p>Afula • Good Vibes • Better Drinks</p>
+    <p id="subHeader">Afula • Good Vibes • Better Drinks</p>
+    <div id="kitchenBadge"></div>
 </header>
 
 <div class="container">
@@ -105,7 +138,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, collection, getDocs, onSnapshot, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyDYZxPjSML1gHTTANx0Fp6TlhI5_ookHNU",
@@ -130,16 +163,38 @@
         'Beer': 'שתייה קלה'
     };
 
-    async function loadMenu() {
-        try {
-            const querySnapshot = await getDocs(collection(db, "menu_hevres"));
-            allItems = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            renderTabs();
-            renderMenu(allItems);
-        } catch (e) {
-            console.error("Error loading menu:", e);
+    // האזנה להגדרות גלובליות (מבצעים וסטטוס מטבח)
+    onSnapshot(doc(db, "settings", "global"), (docSnap) => {
+        if (docSnap.exists()) {
+            const data = docSnap.data();
+            
+            // עדכון באנר מבצע
+            const banner = document.getElementById('promoBanner');
+            if (data.promoText) {
+                banner.innerText = data.promoText;
+                banner.style.display = 'block';
+            } else {
+                banner.style.display = 'none';
+            }
+
+            // עדכון הודעת עומס
+            const badge = document.getElementById('kitchenBadge');
+            if (data.kitchenStatus === 'busy') {
+                badge.innerHTML = '<span class="kitchen-status-badge" style="background:var(--accent); color:#000;">עומס קל במטבח - ייתכן עיכוב</span>';
+            } else if (data.kitchenStatus === 'very-busy') {
+                badge.innerHTML = '<span class="kitchen-status-badge" style="background:var(--danger); color:#fff;">עומס כבד - המטבח סגור זמנית</span>';
+            } else {
+                badge.innerHTML = '';
+            }
         }
-    }
+    });
+
+    // האזנה למנות בזמן אמת (Live Update)
+    onSnapshot(collection(db, "menu_hevres"), (querySnapshot) => {
+        allItems = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        renderTabs();
+        renderMenu(allItems);
+    });
 
     function renderTabs() {
         const container = document.getElementById('categories-container');
@@ -190,8 +245,6 @@
         );
         renderMenu(filtered);
     });
-
-    loadMenu();
 </script>
 
 </body>
