@@ -11,7 +11,7 @@
             --primary: #3b82f6; --danger: #ef4444; --success: #10b981; --accent: #fbbf24;
         }
 
-        body { font-family: 'Assistant', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; }
+        body { font-family: 'Assistant', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; line-height: 1.4; }
         .container { max-width: 900px; margin: 0 auto; }
 
         /* שורת סטטוס עליונה */
@@ -22,7 +22,10 @@
         }
 
         .status-box h4 { margin: 0 0 10px 0; font-size: 0.9rem; color: #94a3b8; }
-        input[type="text"] { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #475569; background: #0f172a; color: white; }
+        input[type="text"], select, textarea { 
+            width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #475569; 
+            background: #0f172a; color: white; font-family: inherit;
+        }
 
         /* כרטיסיות ניהול */
         .admin-grid { display: grid; gap: 15px; }
@@ -30,6 +33,7 @@
             background: var(--card); padding: 15px; border-radius: 12px;
             display: flex; justify-content: space-between; align-items: center;
             border-right: 5px solid var(--primary);
+            transition: 0.3s;
         }
         .admin-card.out-of-stock { border-right-color: var(--danger); opacity: 0.6; }
 
@@ -39,40 +43,43 @@
         .actions { display: flex; gap: 10px; align-items: center; }
         
         /* Toggle Switch */
-        .switch { position: relative; display: inline-block; width: 50px; height: 24px; }
+        .switch { position: relative; display: inline-block; width: 44px; height: 22px; }
         .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #475569; transition: .4s; border-radius: 24px; }
-        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #475569; transition: .4s; border-radius: 22px; }
+        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
         input:checked + .slider { background-color: var(--success); }
-        input:checked + .slider:before { transform: translateX(26px); }
+        input:checked + .slider:before { transform: translateX(22px); }
 
         .price-tag { background: #334155; padding: 5px 10px; border-radius: 6px; font-weight: bold; color: var(--accent); cursor: pointer; }
         
-        .btn-add { background: var(--primary); color: white; padding: 15px; border-radius: 12px; width: 100%; border: none; font-weight: bold; margin-bottom: 20px; cursor: pointer; }
+        .btn-add { background: var(--primary); color: white; padding: 12px 24px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .btn-add:hover { opacity: 0.9; transform: scale(1.02); }
         
-        .modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--card); padding: 30px; border-radius: 20px; z-index: 100; width: 90%; max-width: 400px; box-shadow: 0 0 50px rgba(0,0,0,0.5); }
+        /* Modal */
+        .modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--card); padding: 25px; border-radius: 20px; z-index: 100; width: 90%; max-width: 400px; box-shadow: 0 0 50px rgba(0,0,0,0.5); }
         .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 99; }
+        .modal-actions { display: flex; gap: 10px; margin-top: 15px; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <h2>Control Center 🍸</h2>
-        <button class="btn-add" style="width: auto;" onclick="openModal()">+ מנה חדשה</button>
+        <h2 style="margin:0;">Control Center 🍸</h2>
+        <button class="btn-add" onclick="openModal()">+ מנה חדשה</button>
     </div>
 
     <div class="status-bar">
         <div class="status-box">
-            <h4>מבצע רץ (יופיע בראש התפריט)</h4>
-            <input type="text" id="promoText" placeholder="לדוגמה: 1+1 על כל הקוקטיילים עד 20:00" onchange="updateGlobalSettings()">
+            <h4>מבצע רץ (באנר עליון)</h4>
+            <input type="text" id="promoText" placeholder="לדוגמה: 1+1 עד השעה 20:00" onchange="window.updateGlobalSettings()">
         </div>
         <div class="status-box">
-            <h4>הודעת עומס / זמן הכנה</h4>
-            <select id="kitchenStatus" onchange="updateGlobalSettings()" style="width:100%; padding:10px; border-radius:8px; background:#0f172a; color:white;">
+            <h4>עומס מטבח / הודעה</h4>
+            <select id="kitchenStatus" onchange="window.updateGlobalSettings()">
                 <option value="normal">מצב רגיל - Good Vibes</option>
                 <option value="busy">עומס קל - 20 דקות המתנה</option>
-                <option value="very-busy">עומס כבד - מטבח סגור זמנית</option>
+                <option value="very-busy">עומס כבד - מטבח סגור</option>
             </select>
         </div>
     </div>
@@ -83,16 +90,27 @@
 
 <div class="overlay" id="overlay" onclick="closeModal()"></div>
 <div class="modal" id="itemModal">
-    <h3 id="modalTitle">הוספת מנה</h3>
-    <input type="text" id="itemName" placeholder="שם המנה" style="margin-bottom:10px;">
-    <input type="number" id="itemPrice" placeholder="מחיר" style="margin-bottom:10px;">
-    <textarea id="itemDesc" placeholder="תיאור" style="margin-bottom:10px; width:100%; border-radius:8px; background:#0f172a; color:white; padding:10px;"></textarea>
-    <button onclick="saveItem()" class="btn-add" style="margin:0;">שמור שינויים</button>
+    <h3>הוספת מנה חדשה</h3>
+    <div style="display:grid; gap:10px;">
+        <input type="text" id="itemName" placeholder="שם המנה">
+        <input type="number" id="itemPrice" placeholder="מחיר (₪)">
+        <select id="itemCategory">
+            <option value="Starters">ראשונות</option>
+            <option value="Burgers">המבורגרים</option>
+            <option value="Cocktails">קוקטיילים</option>
+            <option value="Beer">שתייה קלה</option>
+        </select>
+        <textarea id="itemDesc" placeholder="תיאור המנה..." rows="3"></textarea>
+        <div class="modal-actions">
+            <button onclick="saveItem()" class="btn-add" style="flex:1;">שמור מנה</button>
+            <button onclick="closeModal()" class="btn-add" style="flex:1; background:#475569;">ביטול</button>
+        </div>
+    </div>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, getDocs, updateDoc, doc, addDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, collection, getDocs, updateDoc, doc, addDoc, deleteDoc, onSnapshot, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyDYZxPjSML1gHTTANx0Fp6TlhI5_ookHNU",
@@ -106,7 +124,28 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // האזנה בזמן אמת לשינויים (Live Update)
+    // טעינת הגדרות גלובליות
+    async function loadSettings() {
+        const settingsDoc = await getDoc(doc(db, "settings", "global"));
+        if (settingsDoc.exists()) {
+            const data = settingsDoc.data();
+            document.getElementById('promoText').value = data.promoText || "";
+            document.getElementById('kitchenStatus').value = data.kitchenStatus || "normal";
+        }
+    }
+    loadSettings();
+
+    // עדכון הגדרות גלובליות
+    window.updateGlobalSettings = async () => {
+        const promoText = document.getElementById('promoText').value;
+        const kitchenStatus = document.getElementById('kitchenStatus').value;
+        try {
+            await setDoc(doc(db, "settings", "global"), { promoText, kitchenStatus });
+            console.log("Settings updated!");
+        } catch (e) { alert("שגיאה בעדכון הגדרות"); }
+    };
+
+    // האזנה למנות בזמן אמת
     onSnapshot(collection(db, "menu_hevres"), (snapshot) => {
         const grid = document.getElementById('admin-grid');
         grid.innerHTML = '';
@@ -117,37 +156,60 @@
             const card = document.createElement('div');
             card.className = `admin-card ${isOut ? 'out-of-stock' : ''}`;
             card.innerHTML = `
-                <div class="info" onclick="editItemInline('${docSnap.id}', '${data.name}', ${data.price})">
+                <div class="info">
                     <h3>${data.name}</h3>
                     <p>${data.category} | ${data.desc || ''}</p>
                 </div>
                 <div class="actions">
-                    <div class="price-tag" onclick="changePrice('${docSnap.id}', ${data.price})">₪${data.price}</div>
+                    <div class="price-tag" onclick="window.changePrice('${docSnap.id}', ${data.price})">₪${data.price}</div>
                     <label class="switch">
                         <input type="checkbox" ${!isOut ? 'checked' : ''} onchange="window.toggleStock('${docSnap.id}', this.checked)">
                         <span class="slider"></span>
                     </label>
-                    <button onclick="window.deleteItem('${docSnap.id}')" style="background:none; border:none; color:var(--danger); cursor:pointer;">🗑️</button>
+                    <button onclick="window.deleteItem('${docSnap.id}')" style="background:none; border:none; font-size:1.2rem; cursor:pointer;">🗑️</button>
                 </div>
             `;
             grid.appendChild(card);
         });
     });
 
+    // הוספת מנה
+    window.saveItem = async () => {
+        const name = document.getElementById('itemName').value;
+        const price = Number(document.getElementById('itemPrice').value);
+        const category = document.getElementById('itemCategory').value;
+        const desc = document.getElementById('itemDesc').value;
+
+        if(!name || !price) return alert("חובה למלא שם ומחיר");
+
+        try {
+            await addDoc(collection(db, "menu_hevres"), {
+                name, price, category, desc, isAvailable: true, imageUrl: ""
+            });
+            closeModal();
+            document.getElementById('itemName').value = '';
+            document.getElementById('itemPrice').value = '';
+            document.getElementById('itemDesc').value = '';
+        } catch (e) { alert("שגיאה בהוספת מנה"); }
+    };
+
     window.toggleStock = async (id, isAvailable) => {
         await updateDoc(doc(db, "menu_hevres", id), { isAvailable });
     };
 
     window.changePrice = async (id, oldPrice) => {
-        const newPrice = prompt("מחיר חדש:", oldPrice);
-        if (newPrice) await updateDoc(doc(db, "menu_hevres", id), { price: Number(newPrice) });
+        const newPrice = prompt("עדכון מחיר ל:", oldPrice);
+        if (newPrice && !isNaN(newPrice)) {
+            await updateDoc(doc(db, "menu_hevres", id), { price: Number(newPrice) });
+        }
     };
 
     window.deleteItem = async (id) => {
-        if(confirm("למחוק סופית?")) await deleteDoc(doc(db, "menu_hevres", id));
+        if(confirm("למחוק את המנה מהתפריט לצמיתות?")) {
+            await deleteDoc(doc(db, "menu_hevres", id));
+        }
     };
 
-    // פונקציות מודאל (הכנה להרחבה)
     window.openModal = () => {
         document.getElementById('itemModal').style.display = 'block';
         document.getElementById('overlay').style.display = 'block';
@@ -156,19 +218,6 @@
         document.getElementById('itemModal').style.display = 'none';
         document.getElementById('overlay').style.display = 'none';
     };
-
-    window.saveItem = async () => {
-        const newItem = {
-            name: document.getElementById('itemName').value,
-            price: Number(document.getElementById('itemPrice').value),
-            category: "Starters", // אפשר להוסיף Select
-            desc: document.getElementById('itemDesc').value,
-            isAvailable: true
-        };
-        await addDoc(collection(db, "menu_hevres"), newItem);
-        closeModal();
-    };
-
 </script>
 </body>
 </html>
