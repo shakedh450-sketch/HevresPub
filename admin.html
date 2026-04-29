@@ -3,38 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Login - Hevres Bar</title>
+    <title>Control Center - Hevres Bar</title>
     <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #0f172a; --card: #1e293b; --primary: #3b82f6; --text: #f1f5f9; }
-        body { font-family: 'Assistant', sans-serif; background: var(--bg); color: var(--text); margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+        :root {
+            --bg: #0f172a; --card: #1e293b; --text: #f1f5f9;
+            --primary: #3b82f6; --danger: #ef4444; --success: #10b981; --accent: #fbbf24;
+        }
+
+        body { font-family: 'Assistant', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; min-height: 100vh; }
         
+        /* מסך לוגין */
+        .login-container { display: flex; align-items: center; justify-content: center; min-height: 100vh; }
         .login-box { background: var(--card); padding: 30px; border-radius: 20px; width: 90%; max-width: 350px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
-        .admin-content { display: none; width: 100%; max-width: 900px; padding: 20px; }
         
-        input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #475569; background: #0f172a; color: white; box-sizing: border-box; }
-        button { width: 100%; padding: 12px; border-radius: 8px; border: none; background: var(--primary); color: white; font-weight: bold; cursor: pointer; }
+        /* תוכן ניהול */
+        .admin-content { display: none; max-width: 900px; margin: 0 auto; padding: 20px; }
         
-        /* כאן תעתיק את כל ה-CSS מה-admin.html הקודם שלך (של כרטיסיות הניהול) */
-        /* ... ה-CSS הקודם ... */
+        .status-bar { 
+            display: grid; grid-template-columns: 1fr 1fr; gap: 15px; 
+            background: #1e293b; padding: 20px; border-radius: 16px; margin-bottom: 30px;
+            border: 1px solid #334155;
+        }
+
+        .status-box h4 { margin: 0 0 10px 0; font-size: 0.9rem; color: #94a3b8; }
+        input, select, textarea { 
+            width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #475569; 
+            background: #0f172a; color: white; font-family: inherit; box-sizing: border-box;
+        }
+
+        .admin-grid { display: grid; gap: 15px; }
+        .admin-card { 
+            background: var(--card); padding: 15px; border-radius: 12px;
+            display: flex; justify-content: space-between; align-items: center;
+            border-right: 5px solid var(--primary);
+        }
+        .admin-card.out-of-stock { border-right-color: var(--danger); opacity: 0.6; }
+
+        .actions { display: flex; gap: 10px; align-items: center; }
+        
+        .switch { position: relative; display: inline-block; width: 44px; height: 22px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #475569; transition: .4s; border-radius: 22px; }
+        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--success); }
+        input:checked + .slider:before { transform: translateX(22px); }
+
+        .price-tag { background: #334155; padding: 5px 10px; border-radius: 6px; font-weight: bold; color: var(--accent); cursor: pointer; }
+        .btn-add { background: var(--primary); color: white; padding: 12px 24px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; }
+        
+        .modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--card); padding: 25px; border-radius: 20px; z-index: 100; width: 90%; max-width: 400px; box-shadow: 0 0 50px rgba(0,0,0,0.5); }
+        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 99; }
     </style>
 </head>
 <body>
 
-<div id="loginSection" class="login-box">
-    <h2>כניסת מנהל 🍸</h2>
-    <input type="email" id="loginEmail" placeholder="אימייל">
-    <input type="password" id="loginPassword" placeholder="סיסמה">
-    <button onclick="window.login()">התחבר</button>
-    <p id="loginError" style="color:#ef4444; font-size:0.8rem; margin-top:10px;"></p>
+<div id="loginSection" class="login-container">
+    <div class="login-box">
+        <h2>כניסת מנהל 🍸</h2>
+        <input type="email" id="loginEmail" placeholder="אימייל">
+        <input type="password" id="loginPassword" placeholder="סיסמה">
+        <button onclick="window.login()" class="btn-add" style="width:100%; margin-top:15px;">התחבר</button>
+        <p id="loginError" style="color:var(--danger); font-size:0.8rem; margin-top:10px;"></p>
+    </div>
 </div>
 
 <div id="adminSection" class="admin-content">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
         <h2>Control Center 🍸</h2>
-        <button onclick="window.logout()" style="width:auto; background:#475569;">התנתק</button>
+        <div style="display:flex; gap:10px;">
+            <button class="btn-add" onclick="openModal()">+ מנה חדשה</button>
+            <button onclick="window.logout()" style="background:#475569; border:none; color:white; padding:10px; border-radius:12px; cursor:pointer;">התנתק</button>
+        </div>
     </div>
+
+    <div class="status-bar">
+        <div class="status-box">
+            <h4>מבצע רץ (באנר עליון)</h4>
+            <input type="text" id="promoText" placeholder="לדוגמה: 1+1 עד השעה 20:00" onchange="window.updateGlobalSettings()">
+        </div>
+        <div class="status-box">
+            <h4>עומס מטבח</h4>
+            <select id="kitchenStatus" onchange="window.updateGlobalSettings()">
+                <option value="normal">מצב רגיל</option>
+                <option value="busy">עומס קל</option>
+                <option value="very-busy">עומס כבד</option>
+            </select>
+        </div>
     </div>
+
+    <div id="admin-grid" class="admin-grid"></div>
+</div>
+
+<div class="overlay" id="overlay" onclick="closeModal()"></div>
+<div class="modal" id="itemModal">
+    <h3>מנה חדשה</h3>
+    <input type="text" id="itemName" placeholder="שם המנה" style="margin-bottom:10px;">
+    <input type="number" id="itemPrice" placeholder="מחיר" style="margin-bottom:10px;">
+    <select id="itemCategory" style="margin-bottom:10px;">
+        <option value="Starters">ראשונות</option>
+        <option value="Burgers">המבורגרים</option>
+        <option value="Cocktails">קוקטיילים</option>
+        <option value="Beer">שתייה קלה</option>
+    </select>
+    <textarea id="itemDesc" placeholder="תיאור..." style="margin-bottom:10px;"></textarea>
+    <button onclick="saveItem()" class="btn-add" style="width:100%;">שמור מנה</button>
+</div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -59,10 +133,9 @@
         if (user) {
             document.getElementById('loginSection').style.display = 'none';
             document.getElementById('adminSection').style.display = 'block';
-            document.body.style.display = 'block'; // הצגת כל הדף
-            initAdmin(); // הרצת פונקציות הניהול
+            initAdmin();
         } else {
-            document.getElementById('loginSection').style.display = 'block';
+            document.getElementById('loginSection').style.display = 'flex';
             document.getElementById('adminSection').style.display = 'none';
         }
     });
@@ -73,16 +146,82 @@
         try {
             await signInWithEmailAndPassword(auth, email, pass);
         } catch (e) {
-            document.getElementById('loginError').innerText = "פרטים שגויים, נסה שוב";
+            document.getElementById('loginError').innerText = "פרטים שגויים";
         }
     };
 
     window.logout = () => signOut(auth);
 
-    // כאן תדביק את כל שאר פונקציות הניהול (onSnapshot, saveItem, toggleStock וכו')
     function initAdmin() {
-        // ... כל הלוגיקה של הניהול שכתבנו קודם ...
+        // טעינת הגדרות
+        getDoc(doc(db, "settings", "global")).then(s => {
+            if(s.exists()){
+                document.getElementById('promoText').value = s.data().promoText || "";
+                document.getElementById('kitchenStatus').value = s.data().kitchenStatus || "normal";
+            }
+        });
+
+        // האזנה למנות
+        onSnapshot(collection(db, "menu_hevres"), (snap) => {
+            const grid = document.getElementById('admin-grid');
+            grid.innerHTML = '';
+            snap.forEach(d => {
+                const item = d.data();
+                const isOut = item.isAvailable === false;
+                const card = document.createElement('div');
+                card.className = `admin-card ${isOut ? 'out-of-stock' : ''}`;
+                card.innerHTML = `
+                    <div>
+                        <h3>${item.name}</h3>
+                        <p>${item.category}</p>
+                    </div>
+                    <div class="actions">
+                        <div class="price-tag" onclick="window.changePrice('${d.id}', ${item.price})">₪${item.price}</div>
+                        <label class="switch">
+                            <input type="checkbox" ${!isOut ? 'checked' : ''} onchange="window.toggleStock('${d.id}', this.checked)">
+                            <span class="slider"></span>
+                        </label>
+                        <button onclick="window.deleteItem('${d.id}')" style="background:none; border:none; cursor:pointer;">🗑️</button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        });
     }
+
+    window.updateGlobalSettings = async () => {
+        await setDoc(doc(db, "settings", "global"), {
+            promoText: document.getElementById('promoText').value,
+            kitchenStatus: document.getElementById('kitchenStatus').value
+        });
+    };
+
+    window.toggleStock = async (id, isAvailable) => {
+        await updateDoc(doc(db, "menu_hevres", id), { isAvailable });
+    };
+
+    window.changePrice = async (id, old) => {
+        const p = prompt("מחיר חדש:", old);
+        if(p) await updateDoc(doc(db, "menu_hevres", id), { price: Number(p) });
+    };
+
+    window.deleteItem = async (id) => {
+        if(confirm("למחוק?")) await deleteDoc(doc(db, "menu_hevres", id));
+    };
+
+    window.saveItem = async () => {
+        const name = document.getElementById('itemName').value;
+        const price = Number(document.getElementById('itemPrice').value);
+        if(!name || !price) return;
+        await addDoc(collection(db, "menu_hevres"), {
+            name, price, category: document.getElementById('itemCategory').value,
+            desc: document.getElementById('itemDesc').value, isAvailable: true
+        });
+        closeModal();
+    };
+
+    window.openModal = () => { document.getElementById('itemModal').style.display='block'; document.getElementById('overlay').style.display='block'; };
+    window.closeModal = () => { document.getElementById('itemModal').style.display='none'; document.getElementById('overlay').style.display='none'; };
 </script>
 </body>
 </html>
