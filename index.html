@@ -100,13 +100,12 @@
         let currentCategory = 'הכל';
 
         const categoryNames = {
-    'all': 'הכל',
-    'Starters': 'ראשונות',
-    'Burgers': 'המבורגרים',
-    'Cocktails': 'קוקטיילים',
-    'Beer': 'שתייה קלה'
-};
-
+        'all': 'הכל',
+        'Starters': 'ראשונות',
+        'Burgers': 'המבורגרים',
+        'Cocktails': 'קוקטיילים',
+        'Beer': 'שתייה קלה'
+    };
         async function loadMenu() {
             try {
                 const querySnapshot = await getDocs(collection(db, "menu_hevres"));
