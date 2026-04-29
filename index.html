@@ -118,7 +118,7 @@
         function renderTabs() {
             const container = document.getElementById('categories-container');
             // סדר קבוע מימין לשמאל
-            const preferredOrder = ['הכל', 'Starters', 'burgers', 'Main Course', 'Cocktails', 'Drinks'];
+            const preferredOrder = ['all', 'Starters', 'Burgers', 'Cocktails', 'Beer'];
             
             container.innerHTML = preferredOrder.map(cat => {
                 const hasItems = cat === 'הכל' || allItems.some(item => item.category === cat);
