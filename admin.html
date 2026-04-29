@@ -12,7 +12,6 @@
             --text: #f1f5f9;
             --primary: #3b82f6;
             --danger: #ef4444;
-            --success: #10b981;
         }
 
         body {
@@ -23,7 +22,7 @@
             padding: 20px;
         }
 
-        .container { max-width: 900px; margin: 0 auto; }
+        .container { max-width: 800px; margin: 0 auto; }
         
         .card {
             background: var(--card);
@@ -36,7 +35,7 @@
         h2, h3 { margin-top: 0; color: var(--primary); }
 
         .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        label { display: block; margin-bottom: 5px; }
         
         input, select, textarea {
             width: 100%;
@@ -48,7 +47,7 @@
             box-sizing: border-box;
         }
 
-        button {
+        .btn {
             cursor: pointer;
             border: none;
             padding: 12px 20px;
@@ -58,31 +57,28 @@
         }
 
         .btn-primary { background: var(--primary); color: white; width: 100%; }
-        .btn-danger { background: var(--danger); color: white; }
-        .btn-success { background: var(--success); color: white; }
+        .btn-danger { background: var(--danger); color: white; padding: 5px 10px; font-size: 0.8rem; }
         
         table { width: 100%; border-collapse: collapse; margin-top: 20px; }
         th, td { padding: 12px; text-align: right; border-bottom: 1px solid #334155; }
         th { color: #94a3b8; }
-
-        .bulk-section textarea { font-family: monospace; height: 120px; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>ניהול תפריט Hevres Bar</h2>
+    <h2>מרכז ניהול - Hevres Bar</h2>
 
     <div class="card">
-        <h3>הוספת מנה חדשה</h3>
+        <h3>הוספת מנה לתפריט</h3>
         <form id="add-item-form">
             <div class="form-group">
                 <label>שם המנה</label>
-                <input type="text" id="itemName" required>
+                <input type="text" id="itemName" required placeholder="לדוגמה: המבורגר הבית">
             </div>
             <div class="form-group">
                 <label>מחיר</label>
-                <input type="number" id="itemPrice" required>
+                <input type="number" id="itemPrice" required placeholder="לדוגמה: 65">
             </div>
             <div class="form-group">
                 <label>קטגוריה</label>
@@ -90,30 +86,19 @@
                     <option value="Starters">ראשונות</option>
                     <option value="Burgers">המבורגרים</option>
                     <option value="Cocktails">קוקטיילים</option>
-                    <option value="Beer">בירה</option>
-                    <option value="Wine">יין</option>
+                    <option value="Beer">שתייה קלה</option>
                 </select>
             </div>
             <div class="form-group">
                 <label>תיאור</label>
-                <textarea id="itemDesc"></textarea>
+                <textarea id="itemDesc" placeholder="מה יש במנה?"></textarea>
             </div>
-            <button type="submit" class="btn-primary">הוסף מנה לתפריט</button>
+            <button type="submit" class="btn btn-primary">הוסף מנה</button>
         </form>
     </div>
 
-    <div class="card bulk-section" style="border: 2px solid var(--success);">
-        <h3>🚀 הזנה מהירה (Bulk Add)</h3>
-        <p style="font-size: 0.85rem; color: #94a3b8;">הדבק שורות בפורמט: שם, מחיר, קטגוריה, תיאור</p>
-        <textarea id="bulkInput" placeholder="צ'יפס, 35, Starters, צ'יפס פריך עם איולי..."></textarea>
-        <button onclick="handleBulkAdd()" class="btn-success" style="margin-top: 10px;">הזרק מנות לתפריט</button>
-    </div>
-
     <div class="card">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <h3>מנות בתפריט</h3>
-            <button onclick="clearAllMenu()" class="btn-danger">מחיקת כל התפריט (זהירות!)</button>
-        </div>
+        <h3>מנות קיימות בתפריט</h3>
         <table id="menu-table">
             <thead>
                 <tr>
@@ -133,41 +118,41 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    // הגדרות Firebase - תוודא שהן תואמות לשלך!
-   const firebaseConfig = {
-            apiKey: "AIzaSyDYZxPjSML1gHTTANx0Fp6TlhI5_ookHNU",
-            authDomain: "hevresbar.firebaseapp.com",
-            projectId: "hevresbar",
-            storageBucket: "hevresbar.firebasestorage.app",
-            messagingSenderId: "737238391891",
-            appId: "1:737238391891:web:ad0076917e2f7133eb7aa6"
-        };
+    // תדביק כאן את ה-Firebase Config שלך מה-index.html
+    const firebaseConfig = {
+        apiKey: "AIzaSyDYZxPjSML1gHTTANx0Fp6TlhI5_ookHNU",
+        authDomain: "hevresbar.firebaseapp.com",
+        projectId: "hevresbar",
+        storageBucket: "hevresbar.firebasestorage.app",
+        messagingSenderId: "737238391891",
+        appId: "1:737238391891:web:ad0076917e2f7133eb7aa6"
+    };
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // טעינת התפריט
     async function renderMenu() {
         const menuBody = document.getElementById('menu-body');
-        menuBody.innerHTML = '<tr><td colspan="4">טוען נתונים...</td></tr>';
-        
-        const querySnapshot = await getDocs(collection(db, "menu_hevres"));
         menuBody.innerHTML = '';
         
-        querySnapshot.forEach((docSnap) => {
-            const data = docSnap.data();
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>${data.name}</td>
-                <td>₪${data.price}</td>
-                <td>${data.category}</td>
-                <td><button onclick="deleteItem('${docSnap.id}')" class="btn-danger" style="padding: 5px 10px;">מחק</button></td>
-            `;
-            menuBody.appendChild(tr);
-        });
+        try {
+            const querySnapshot = await getDocs(collection(db, "menu_hevres"));
+            querySnapshot.forEach((docSnap) => {
+                const data = docSnap.data();
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${data.name}</td>
+                    <td>₪${data.price}</td>
+                    <td>${data.category}</td>
+                    <td><button onclick="window.deleteItem('${docSnap.id}')" class="btn btn-danger">מחק</button></td>
+                `;
+                menuBody.appendChild(tr);
+            });
+        } catch (e) {
+            console.error("Error loading menu:", e);
+        }
     }
 
-    // הוספת מנה בודדת
     document.getElementById('add-item-form').addEventListener('submit', async (e) => {
         e.preventDefault();
         const newItem = {
@@ -182,47 +167,13 @@
         renderMenu();
     });
 
-    // --- פונקציות גלובליות ---
-
-    // הזרקת מנות מרובה
-    window.handleBulkAdd = async () => {
-        const text = document.getElementById('bulkInput').value;
-        const lines = text.split('\n').filter(line => line.trim() !== "");
-        if (!confirm(`מוכן להוסיף ${lines.length} מנות?`)) return;
-
-        for (let line of lines) {
-            const [name, price, category, desc] = line.split(',').map(s => s.trim());
-            await addDoc(collection(db, "menu_hevres"), {
-                name: name,
-                price: Number(price) || 0,
-                category: category || "Starters",
-                desc: desc || "",
-                imageUrl: ""
-            });
-        }
-        alert("ההזרקה הושלמה!");
-        document.getElementById('bulkInput').value = '';
-        renderMenu();
-    };
-
-    // מחיקת כל התפריט במכה אחת
-    window.clearAllMenu = async () => {
-        if (!confirm("זה ימחק הכל. בטוח?")) return;
-        const querySnapshot = await getDocs(collection(db, "menu_hevres"));
-        const deletePromises = querySnapshot.docs.map(d => deleteDoc(doc(db, "menu_hevres", d.id)));
-        await Promise.all(deletePromises);
-        renderMenu();
-    };
-
-    // מחיקת מנה בודדת
     window.deleteItem = async (id) => {
-        if (confirm("למחוק את המנה?")) {
+        if (confirm("בטוח שברצונך למחוק את המנה?")) {
             await deleteDoc(doc(db, "menu_hevres", id));
             renderMenu();
         }
     };
 
-    // הפעלה ראשונית
     renderMenu();
 </script>
 
