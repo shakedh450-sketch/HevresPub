@@ -143,14 +143,30 @@
         }
     }
 
-    function renderTabs() {
-        const container = document.getElementById('categories-container');
-        const preferredOrder = ['all', 'Starters', 'Burgers', 'Cocktails', 'Beer'];
+    function renderMenu(items) {
+        const grid = document.getElementById('menu-grid');
         
-        container.innerHTML = preferredOrder.map(cat => {
-            const isActive = currentCategory === cat ? 'active' : '';
-            return `<button class="cat-btn ${isActive}" onclick="window.filterByCategory('${cat}')">${categoryNames[cat] || cat}</button>`;
-        }).join('');
+        // כאן התיקון: אנחנו מסננים החוצה מנות שהן לא Available
+        const filtered = items.filter(item => {
+            const matchesCategory = currentCategory === 'all' || item.category === currentCategory;
+            const isAvailable = item.isAvailable !== false; // אם השדה לא קיים או שהוא true
+            return matchesCategory && isAvailable;
+        });
+
+        if (filtered.length === 0) {
+            grid.innerHTML = '<p style="text-align:center; color:#94a3b8;">אין מנות זמינות כרגע בקטגוריה זו</p>';
+            return;
+        }
+
+        grid.innerHTML = filtered.map(item => `
+            <div class="menu-item">
+                <div class="item-info">
+                    <h3>${item.name}</h3>
+                    <p>${item.desc || ''}</p>
+                </div>
+                <div class="item-price">₪${item.price}</div>
+            </div>
+        `).join('');
     }
 
     function renderMenu(items) {
