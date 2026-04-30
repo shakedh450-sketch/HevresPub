@@ -8,13 +8,13 @@
     <style>
         :root {
             --bg: #0f172a; --card: #1e293b; --text: #f1f5f9;
-            --primary: #3b82f6; --accent: #fbbf24; --danger: #ef4444;
+            --primary: #3b82f6; --accent: #fbbf24; --danger: #ef4444; --success: #10b981;
         }
 
         html { scroll-behavior: smooth; }
         body { font-family: 'Assistant', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 0; line-height: 1.6; }
 
-        /* באנר ומבנה (נשמר מהקוד הקודם) */
+        /* באנר ומבנה */
         .promo-banner { background: var(--accent); color: #000; text-align: center; padding: 10px; font-weight: bold; display: none; position: sticky; top: 0; z-index: 1001; }
         header { text-align: center; padding: 40px 20px; background: linear-gradient(rgba(15,23,42,0.8), rgba(15,23,42,0.8)), url('https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&q=80'); background-size: cover; background-position: center; }
         .container { max-width: 800px; margin: 0 auto; padding: 20px; }
@@ -30,15 +30,46 @@
         .menu-item { background: var(--card); padding: 20px; border-radius: 16px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .item-price { font-weight: bold; color: var(--accent); }
 
-        /* מערכת דירוג */
-        .review-card { background: #1e293b; border: 2px solid var(--primary); border-radius: 20px; padding: 25px; text-align: center; margin-top: 50px; margin-bottom: 30px; }
-        .stars { display: flex; justify-content: center; gap: 10px; margin: 15px 0; font-size: 2rem; cursor: pointer; }
-        .star { color: #475569; transition: 0.2s; }
-        .star.active { color: var(--accent); }
-        .feedback-area { display: none; margin-top: 15px; animation: fadeIn 0.3s; }
-        textarea { width: 100%; background: #0f172a; color: white; border: 1px solid #475569; border-radius: 8px; padding: 10px; margin-bottom: 10px; font-family: inherit; }
+        /* ווידג'ט דירוג צף - העדכון החדש */
+        .review-card { 
+            position: fixed; 
+            bottom: 20px; 
+            left: 20px; 
+            width: 260px; 
+            background: rgba(30, 41, 59, 0.9); /* שקיפות אלגנטית */
+            backdrop-filter: blur(10px); 
+            border: 1px solid rgba(59, 130, 246, 0.5); 
+            border-radius: 20px; 
+            padding: 15px; 
+            z-index: 2000; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: slideIn 0.8s ease-out;
+        }
 
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideIn { from { transform: translateX(-120%); } to { transform: translateX(0); } }
+
+        .review-card h3 { font-size: 1rem; margin: 0 0 5px 0; }
+        .review-card p { font-size: 0.8rem; margin: 0; color: #94a3b8; }
+        
+        .stars { display: flex; justify-content: center; gap: 8px; margin: 10px 0; font-size: 1.4rem; cursor: pointer; }
+        .star { color: #475569; transition: 0.2s; }
+        .star.active { color: var(--accent); transform: scale(1.2); }
+
+        .close-review { 
+            position: absolute; top: 10px; right: 10px; font-size: 0.8rem; 
+            color: #94a3b8; cursor: pointer; background: rgba(0,0,0,0.2); 
+            width: 20px; height: 20px; border-radius: 50%; 
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .feedback-area { display: none; margin-top: 10px; }
+        textarea { width: 100%; background: #0f172a; color: white; border: 1px solid #475569; border-radius: 8px; padding: 8px; font-size: 0.8rem; font-family: inherit; margin-bottom: 8px; }
+
+        /* התאמה למובייל - שלא יסתיר יותר מדי */
+        @media (max-width: 480px) {
+            .review-card { width: 220px; bottom: 15px; left: 15px; padding: 12px; }
+        }
     </style>
 </head>
 <body>
@@ -55,38 +86,34 @@
     <div class="categories-wrapper">
         <div id="categories-container" class="categories-container"></div>
     </div>
-
     <div id="menu-content"></div>
+</div>
 
-    <!-- כרטיס דירוג (סינון ביקורות) -->
-    <div class="review-card" id="reviewCard">
-        <h3>נהניתם? נשמח לדעת! 🍸</h3>
-        <p>דרגו את החוויה שלכם ב-Hevres Bar</p>
-        <div class="stars" id="starRating">
-            <span class="star" data-value="1">★</span>
-            <span class="star" data-value="2">★</span>
-            <span class="star" data-value="3">★</span>
-            <span class="star" data-value="4">★</span>
-            <span class="star" data-value="5">★</span>
-        </div>
-        
-        <div id="lowRatingFeedback" class="feedback-area">
-            <p>מצטערים לשמוע... נשמח להבין מה אפשר לשפר:</p>
-            <textarea id="feedbackText" rows="3" placeholder="כתבו לנו כאן..."></textarea>
-            <button onclick="sendFeedback()" style="background:var(--primary); color:white; border:none; padding:10px 20px; border-radius:8px; cursor:pointer;">שלח משוב</button>
-        </div>
-
-        <div id="thankYouMsg" style="display:none; color:var(--success); margin-top:15px;">
-            תודה על המשוב! אנחנו מעריכים את זה מאוד.
-        </div>
+<!-- הווידג'ט הצף -->
+<div class="review-card" id="reviewCard">
+    <div class="close-review" onclick="window.closeReview()">✕</div>
+    <h3>נהניתם? נשמח לדעת! 🍸</h3>
+    <p>דרגו את החוויה שלכם</p>
+    <div class="stars" id="starRating">
+        <span class="star" data-value="1">★</span>
+        <span class="star" data-value="2">★</span>
+        <span class="star" data-value="3">★</span>
+        <span class="star" data-value="4">★</span>
+        <span class="star" data-value="5">★</span>
     </div>
+    
+    <div id="lowRatingFeedback" class="feedback-area">
+        <textarea id="feedbackText" rows="2" placeholder="מה נוכל לשפר?"></textarea>
+        <button onclick="sendFeedback()" style="background:var(--primary); color:white; border:none; padding:8px 15px; border-radius:6px; cursor:pointer; width:100%; font-size:0.8rem;">שלח משוב</button>
+    </div>
+
+    <div id="thankYouMsg" style="display:none; color:var(--success); font-size:0.8rem; margin-top:10px; font-weight:bold;"></div>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getFirestore, collection, onSnapshot, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    // הקונפיגורציה שלך (נשארת זהה)
     const firebaseConfig = {
         apiKey: "AIzaSyDYZxPjSML1gHTTANx0Fp6TlhI5_ookHNU",
         authDomain: "hevresbar.firebaseapp.com",
@@ -98,41 +125,41 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+    const googleLink = "https://search.google.com/local/writereview?placeid=ChIJ7ZiYNuRTHBURotvjTJOhuHs";
 
-    const googleReviewLink = "https://search.google.com/local/writereview?placeid=ChIJ7ZiYNuRTHBURotvjTJOhuHs";
-
-    // לוגיקת כוכבים
+    // לוגיקת כוכבים מאובטחת
     const stars = document.querySelectorAll('.star');
     stars.forEach(star => {
         star.addEventListener('click', () => {
-            const rating = parseInt(star.getAttribute('data-value'));
-            
-            // צביעת כוכבים
-            stars.forEach((s, idx) => {
-                s.classList.toggle('active', idx < rating);
-            });
+            const val = parseInt(star.getAttribute('data-value'));
+            stars.forEach((s, i) => s.classList.toggle('active', i < val));
 
-            if (rating >= 4) {
-                // מרוצה -> שלח לגוגל
-                window.open(googleReviewLink, '_blank');
-                document.getElementById('lowRatingFeedback').style.display = 'none';
+            if (val >= 4) {
+                document.getElementById('thankYouMsg').innerText = "מעולה! מעבירים אתכם לגוגל...";
                 document.getElementById('thankYouMsg').style.display = 'block';
-                document.getElementById('thankYouMsg').innerText = "תודה! מעבירים אתכם לדירוג בגוגל...";
+                document.getElementById('lowRatingFeedback').style.display = 'none';
+                setTimeout(() => { window.open(googleLink, '_blank'); }, 1000);
             } else {
-                // לא מרוצה -> תשאיר אצלנו
                 document.getElementById('lowRatingFeedback').style.display = 'block';
                 document.getElementById('thankYouMsg').style.display = 'none';
             }
         });
     });
 
-    window.sendFeedback = () => {
-        document.getElementById('lowRatingFeedback').style.display = 'none';
-        document.getElementById('thankYouMsg').style.display = 'block';
-        document.getElementById('thankYouMsg').innerText = "תודה על הכנות, המשוב התקבל אצלנו במערכת.";
+    window.closeReview = () => {
+        document.getElementById('reviewCard').style.transform = 'translateX(-150%)';
+        setTimeout(() => { document.getElementById('reviewCard').style.display = 'none'; }, 500);
     };
 
-    // שאר הקוד של התפריט והסנכרון (נשמר מהגרסה הקודמת)
+    window.sendFeedback = () => {
+        document.getElementById('lowRatingFeedback').style.display = 'none';
+        const msg = document.getElementById('thankYouMsg');
+        msg.innerText = "תודה! המשוב התקבל.";
+        msg.style.display = 'block';
+        setTimeout(window.closeReview, 2000);
+    };
+
+    // סנכרון תפריט
     let allItems = [];
     const preferredOrder = ['Starters', 'Burgers', 'Cocktails', 'Beer'];
     const categoryNames = {'Starters': 'ראשונות', 'Burgers': 'המבורגרים', 'Cocktails': 'קוקטיילים', 'Beer': 'שתייה קלה'};
@@ -190,14 +217,14 @@
                 if (entry.isIntersecting) {
                     const cat = entry.target.id.replace('section-', '');
                     document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-                    const activeTab = document.getElementById(`tab-${cat}`);
-                    if (activeTab) activeTab.classList.add('active');
+                    const tab = document.getElementById(`tab-${cat}`);
+                    if (tab) tab.classList.add('active');
                 }
             });
         }, { rootMargin: '-100px 0px -70% 0px' });
         preferredOrder.forEach(cat => {
-            const section = document.getElementById(`section-${cat}`);
-            if (section) observer.observe(section);
+            const sec = document.getElementById(`section-${cat}`);
+            if (sec) observer.observe(sec);
         });
     }
 
