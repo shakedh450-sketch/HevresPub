@@ -14,87 +14,36 @@
         html { scroll-behavior: smooth; }
         body { font-family: 'Assistant', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 0; line-height: 1.6; }
 
-        /* מבנה כללי */
         header { text-align: center; padding: 40px 20px; background: linear-gradient(rgba(15,23,42,0.8), rgba(15,23,42,0.8)), url('https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&q=80'); background-size: cover; background-position: center; }
         .container { max-width: 800px; margin: 0 auto; padding: 20px; }
 
-        /* סרגל קטגוריות דביק */
         .categories-wrapper { position: sticky; top: 0; background: var(--bg); z-index: 1000; padding: 15px 0; border-bottom: 1px solid #1e293b; margin-bottom: 20px; }
         .categories-container { display: flex; gap: 10px; overflow-x: auto; scrollbar-width: none; padding: 0 20px; }
         .cat-btn { padding: 10px 20px; border-radius: 25px; border: 1px solid #334155; background: var(--card); color: var(--text); cursor: pointer; white-space: nowrap; transition: 0.3s; }
         .cat-btn.active { background: var(--primary); border-color: var(--primary); }
 
-        /* מנות */
         .category-section { padding-top: 20px; margin-bottom: 40px; }
         .category-title { font-size: 1.5rem; color: var(--accent); margin-bottom: 20px; border-right: 4px solid var(--primary); padding-right: 15px; }
         .menu-item { background: var(--card); padding: 20px; border-radius: 16px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .item-price { font-weight: bold; color: var(--accent); }
+        .item-info h3 { margin: 0; font-size: 1.1rem; }
+        .item-info p { margin: 5px 0 0; font-size: 0.9rem; color: #94a3b8; }
+        .item-price { font-weight: bold; color: var(--accent); min-width: 50px; text-align: left; }
 
-        /* כפתור "פרגנו לנו" - הפיצ'ר החדש */
         .floating-review-btn {
-            position: fixed;
-            bottom: 25px;
-            right: 25px;
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-            z-index: 2000;
+            position: fixed; bottom: 25px; right: 25px;
+            display: flex; align-items: center; cursor: pointer; z-index: 2000;
             transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-
         .floating-review-btn:hover { transform: scale(1.05); }
+        .btn-icon-circle { width: 55px; height: 55px; background: var(--orange); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0,0,0,0.3); z-index: 2; font-size: 1.5rem; }
+        .btn-pill-text { background: var(--orange); color: #000; font-weight: 700; padding: 10px 25px 10px 40px; border-radius: 30px; margin-right: -25px; font-size: 1rem; box-shadow: 0 4px 10px rgba(0,0,0,0.2); white-space: nowrap; }
 
-        .btn-icon-circle {
-            width: 55px;
-            height: 55px;
-            background: var(--orange);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            z-index: 2;
-            font-size: 1.5rem;
-        }
-
-        .btn-pill-text {
-            background: var(--orange);
-            color: #000;
-            font-weight: 700;
-            padding: 10px 25px 10px 40px; /* ריווח שמאלה כדי שייכנס מתחת לעיגול */
-            border-radius: 30px;
-            margin-right: -25px; /* הצמדה לעיגול */
-            font-size: 1rem;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            white-space: nowrap;
-        }
-
-        /* תיבת הדירוג (מוסתרת בהתחלה) */
-        .rating-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8);
-            z-index: 3000;
-            align-items: center; justify-content: center;
-            backdrop-filter: blur(5px);
-        }
-
-        .rating-box {
-            background: var(--card);
-            padding: 30px;
-            border-radius: 20px;
-            text-align: center;
-            width: 90%;
-            max-width: 350px;
-            border: 1px solid var(--primary);
-        }
-
+        .rating-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 3000; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
+        .rating-box { background: var(--card); padding: 30px; border-radius: 20px; text-align: center; width: 90%; max-width: 350px; border: 1px solid var(--primary); }
         .stars { display: flex; justify-content: center; gap: 10px; margin: 20px 0; font-size: 2.2rem; cursor: pointer; }
-        .star { color: #475569; }
+        .star { color: #475569; transition: 0.2s; }
         .star.active { color: var(--accent); }
-
-        textarea { width: 100%; background: #0f172a; color: white; border: 1px solid #475569; border-radius: 8px; padding: 10px; margin-bottom: 15px; font-family: inherit; }
+        textarea { width: 100%; background: #0f172a; color: white; border: 1px solid #475569; border-radius: 8px; padding: 10px; margin-bottom: 15px; font-family: inherit; resize: none; box-sizing: border-box; }
     </style>
 </head>
 <body>
@@ -111,16 +60,14 @@
     <div id="menu-content"></div>
 </div>
 
-<!-- כפתור ה"פרגנו לנו" הצף -->
 <div class="floating-review-btn" onclick="window.openRating()">
     <div class="btn-icon-circle">📝</div>
     <div class="btn-pill-text">⭐ פרגנו לנו ב-5 כוכבים</div>
 </div>
 
-<!-- תיבת הדירוג החכמה -->
 <div class="rating-overlay" id="ratingOverlay">
     <div class="rating-box">
-        <div style="text-align: left; cursor: pointer;" onclick="window.closeRating()">✕</div>
+        <div style="text-align: left; cursor: pointer; margin-bottom: 10px;" onclick="window.closeRating()">✕</div>
         <h3>איך הייתה החוויה שלכם? 🍸</h3>
         <div class="stars" id="starContainer">
             <span class="star" data-v="1">★</span>
@@ -131,17 +78,16 @@
         </div>
         <div id="feedbackForm" style="display:none;">
             <textarea id="feedbackMsg" rows="3" placeholder="נשמח לשמוע מה אפשר לשפר..."></textarea>
-            <button onclick="sendFeedback()" style="background:var(--primary); color:white; border:none; padding:10px 20px; border-radius:8px; width:100%; cursor:pointer;">שלח משוב</button>
+            <button onclick="window.sendFeedback()" style="background:var(--primary); color:white; border:none; padding:10px 20px; border-radius:8px; width:100%; cursor:pointer; font-weight:bold;">שלח משוב</button>
         </div>
-        <div id="thankYou" style="display:none; color:var(--accent); font-weight:bold;">
-            תודה רבה! מעריכים את זה מאוד.
-        </div>
+        <div id="thankYou" style="display:none; color:var(--accent); font-weight:bold; margin-top: 10px;"></div>
     </div>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getFirestore, collection, onSnapshot, doc, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
     const firebaseConfig = {
         apiKey: "AIzaSyDYZxPjSML1gHTTANx0Fp6TlhI5_ookHNU",
         authDomain: "hevresbar.firebaseapp.com",
@@ -155,34 +101,57 @@
     const db = getFirestore(app);
     const googleLink = "https://search.google.com/local/writereview?placeid=ChIJ7ZiYNuRTHBURotvjTJOhuHs";
 
-    // לוגיקת דירוג
-    window.openRating = () => document.getElementById('ratingOverlay').style.display = 'flex';
-    window.closeRating = () => document.getElementById('ratingOverlay').style.display = 'none';
+    let currentSelectedRating = 0;
+
+    async function saveReviewToFirebase(rating, feedbackText) {
+        try {
+            await addDoc(collection(db, "user_reviews"), {
+                rating: rating,
+                feedback: feedbackText,
+                createdAt: serverTimestamp()
+            });
+            console.log("Review saved to Firebase");
+        } catch (e) {
+            console.error("Error saving review: ", e);
+        }
+    }
+
+    window.openRating = () => { document.getElementById('ratingOverlay').style.display = 'flex'; };
+    window.closeRating = () => { document.getElementById('ratingOverlay').style.display = 'none'; };
 
     const stars = document.querySelectorAll('.star');
     stars.forEach(s => {
-        s.onclick = () => {
-            const val = parseInt(s.dataset.v);
-            stars.forEach((st, i) => st.classList.toggle('active', i < val));
+        s.onclick = async () => {
+            currentSelectedRating = parseInt(s.dataset.v);
+            stars.forEach((st, i) => st.classList.toggle('active', i < currentSelectedRating));
 
-            if (val >= 4) {
-                document.getElementById('thankYou').innerText = "איזה כיף! מעבירים אתכם לגוגל...";
-                document.getElementById('thankYou').style.display = 'block';
+            if (currentSelectedRating >= 4) {
+                await saveReviewToFirebase(currentSelectedRating, "Positive - Redirected to Google");
+                const msg = document.getElementById('thankYou');
+                msg.innerText = "איזה כיף! מעבירים אתכם לגוגל...";
+                msg.style.display = 'block';
+                document.getElementById('feedbackForm').style.display = 'none';
                 setTimeout(() => { window.open(googleLink, '_blank'); window.closeRating(); }, 1200);
             } else {
                 document.getElementById('feedbackForm').style.display = 'block';
+                document.getElementById('thankYou').style.display = 'none';
             }
         };
     });
 
-    window.sendFeedback = () => {
+    window.sendFeedback = async () => {
+        const text = document.getElementById('feedbackMsg').value;
+        if(!text) return alert("נשמח אם תפרטו קצת כדי שנוכל להשתפר");
+        
+        await saveReviewToFirebase(currentSelectedRating, text);
+        
         document.getElementById('feedbackForm').style.display = 'none';
-        document.getElementById('thankYou').innerText = "תודה על הכנות, המשוב התקבל.";
-        document.getElementById('thankYou').style.display = 'block';
-        setTimeout(window.closeRating, 2000);
+        const msg = document.getElementById('thankYou');
+        msg.innerText = "תודה על הכנות, המשוב התקבל.";
+        msg.style.display = 'block';
+        setTimeout(window.closeRating, 2500);
     };
 
-    // בניית תפריט (זהה לקוד הקודם)
     let allItems = [];
     const preferredOrder = ['Starters', 'Burgers', 'Cocktails', 'Beer'];
     const categoryNames = {'Starters': 'ראשונות', 'Burgers': 'המבורגרים', 'Cocktails': 'קוקטיילים', 'Beer': 'שתייה קלה'};
@@ -191,11 +160,11 @@
         allItems = snap.docs.map(d => ({ id: d.id, ...d.data() }));
         renderTabs();
         renderMenu();
-        setupScrollSpy();
     });
 
     function renderTabs() {
         const container = document.getElementById('categories-container');
+        if(!container) return;
         container.innerHTML = preferredOrder.map(cat => `
             <button class="cat-btn" id="tab-${cat}" onclick="window.scrollToCategory('${cat}')">${categoryNames[cat]}</button>
         `).join('');
@@ -203,6 +172,7 @@
 
     function renderMenu() {
         const content = document.getElementById('menu-content');
+        if(!content) return;
         content.innerHTML = preferredOrder.map(cat => {
             const catItems = allItems.filter(i => i.category === cat && i.isAvailable !== false);
             if (catItems.length === 0) return '';
@@ -233,23 +203,6 @@
             window.scrollTo({ top, behavior: 'smooth' });
         }
     };
-
-    function setupScrollSpy() {
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const cat = entry.target.id.replace('section-', '');
-                    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-                    const tab = document.getElementById(`tab-${cat}`);
-                    if (tab) tab.classList.add('active');
-                }
-            });
-        }, { rootMargin: '-100px 0px -70% 0px' });
-        preferredOrder.forEach(cat => {
-            const sec = document.getElementById(`section-${cat}`);
-            if (sec) observer.observe(sec);
-        });
-    }
 </script>
 </body>
 </html>
