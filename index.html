@@ -8,78 +8,100 @@
     <style>
         :root {
             --bg: #0f172a; --card: #1e293b; --text: #f1f5f9;
-            --primary: #3b82f6; --accent: #fbbf24; --danger: #ef4444; --success: #10b981;
+            --primary: #3b82f6; --accent: #fbbf24; --orange: #ff9800;
         }
 
         html { scroll-behavior: smooth; }
         body { font-family: 'Assistant', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 0; line-height: 1.6; }
 
-        /* באנר ומבנה */
-        .promo-banner { background: var(--accent); color: #000; text-align: center; padding: 10px; font-weight: bold; display: none; position: sticky; top: 0; z-index: 1001; }
+        /* מבנה כללי */
         header { text-align: center; padding: 40px 20px; background: linear-gradient(rgba(15,23,42,0.8), rgba(15,23,42,0.8)), url('https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&q=80'); background-size: cover; background-position: center; }
         .container { max-width: 800px; margin: 0 auto; padding: 20px; }
 
+        /* סרגל קטגוריות דביק */
         .categories-wrapper { position: sticky; top: 0; background: var(--bg); z-index: 1000; padding: 15px 0; border-bottom: 1px solid #1e293b; margin-bottom: 20px; }
         .categories-container { display: flex; gap: 10px; overflow-x: auto; scrollbar-width: none; padding: 0 20px; }
         .cat-btn { padding: 10px 20px; border-radius: 25px; border: 1px solid #334155; background: var(--card); color: var(--text); cursor: pointer; white-space: nowrap; transition: 0.3s; }
         .cat-btn.active { background: var(--primary); border-color: var(--primary); }
 
+        /* מנות */
         .category-section { padding-top: 20px; margin-bottom: 40px; }
         .category-title { font-size: 1.5rem; color: var(--accent); margin-bottom: 20px; border-right: 4px solid var(--primary); padding-right: 15px; }
-        
         .menu-item { background: var(--card); padding: 20px; border-radius: 16px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .item-price { font-weight: bold; color: var(--accent); }
 
-        /* ווידג'ט דירוג צף - העדכון החדש */
-        .review-card { 
-            position: fixed; 
-            bottom: 20px; 
-            left: 20px; 
-            width: 260px; 
-            background: rgba(30, 41, 59, 0.9); /* שקיפות אלגנטית */
-            backdrop-filter: blur(10px); 
-            border: 1px solid rgba(59, 130, 246, 0.5); 
-            border-radius: 20px; 
-            padding: 15px; 
-            z-index: 2000; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            animation: slideIn 0.8s ease-out;
+        /* כפתור "פרגנו לנו" - הפיצ'ר החדש */
+        .floating-review-btn {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            z-index: 2000;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        @keyframes slideIn { from { transform: translateX(-120%); } to { transform: translateX(0); } }
+        .floating-review-btn:hover { transform: scale(1.05); }
 
-        .review-card h3 { font-size: 1rem; margin: 0 0 5px 0; }
-        .review-card p { font-size: 0.8rem; margin: 0; color: #94a3b8; }
-        
-        .stars { display: flex; justify-content: center; gap: 8px; margin: 10px 0; font-size: 1.4rem; cursor: pointer; }
-        .star { color: #475569; transition: 0.2s; }
-        .star.active { color: var(--accent); transform: scale(1.2); }
-
-        .close-review { 
-            position: absolute; top: 10px; right: 10px; font-size: 0.8rem; 
-            color: #94a3b8; cursor: pointer; background: rgba(0,0,0,0.2); 
-            width: 20px; height: 20px; border-radius: 50%; 
-            display: flex; align-items: center; justify-content: center;
+        .btn-icon-circle {
+            width: 55px;
+            height: 55px;
+            background: var(--orange);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            z-index: 2;
+            font-size: 1.5rem;
         }
 
-        .feedback-area { display: none; margin-top: 10px; }
-        textarea { width: 100%; background: #0f172a; color: white; border: 1px solid #475569; border-radius: 8px; padding: 8px; font-size: 0.8rem; font-family: inherit; margin-bottom: 8px; }
-
-        /* התאמה למובייל - שלא יסתיר יותר מדי */
-        @media (max-width: 480px) {
-            .review-card { width: 220px; bottom: 15px; left: 15px; padding: 12px; }
+        .btn-pill-text {
+            background: var(--orange);
+            color: #000;
+            font-weight: 700;
+            padding: 10px 25px 10px 40px; /* ריווח שמאלה כדי שייכנס מתחת לעיגול */
+            border-radius: 30px;
+            margin-right: -25px; /* הצמדה לעיגול */
+            font-size: 1rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            white-space: nowrap;
         }
+
+        /* תיבת הדירוג (מוסתרת בהתחלה) */
+        .rating-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 3000;
+            align-items: center; justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .rating-box {
+            background: var(--card);
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            width: 90%;
+            max-width: 350px;
+            border: 1px solid var(--primary);
+        }
+
+        .stars { display: flex; justify-content: center; gap: 10px; margin: 20px 0; font-size: 2.2rem; cursor: pointer; }
+        .star { color: #475569; }
+        .star.active { color: var(--accent); }
+
+        textarea { width: 100%; background: #0f172a; color: white; border: 1px solid #475569; border-radius: 8px; padding: 10px; margin-bottom: 15px; font-family: inherit; }
     </style>
 </head>
 <body>
 
-<div id="promoBanner" class="promo-banner"></div>
-
 <header>
     <h1>HEVRES BAR</h1>
     <p>Afula • Good Vibes • Better Drinks</p>
-    <div id="kitchenBadge"></div>
 </header>
 
 <div class="container">
@@ -89,30 +111,37 @@
     <div id="menu-content"></div>
 </div>
 
-<!-- הווידג'ט הצף -->
-<div class="review-card" id="reviewCard">
-    <div class="close-review" onclick="window.closeReview()">✕</div>
-    <h3>נהניתם? נשמח לדעת! 🍸</h3>
-    <p>דרגו את החוויה שלכם</p>
-    <div class="stars" id="starRating">
-        <span class="star" data-value="1">★</span>
-        <span class="star" data-value="2">★</span>
-        <span class="star" data-value="3">★</span>
-        <span class="star" data-value="4">★</span>
-        <span class="star" data-value="5">★</span>
-    </div>
-    
-    <div id="lowRatingFeedback" class="feedback-area">
-        <textarea id="feedbackText" rows="2" placeholder="מה נוכל לשפר?"></textarea>
-        <button onclick="sendFeedback()" style="background:var(--primary); color:white; border:none; padding:8px 15px; border-radius:6px; cursor:pointer; width:100%; font-size:0.8rem;">שלח משוב</button>
-    </div>
+<!-- כפתור ה"פרגנו לנו" הצף -->
+<div class="floating-review-btn" onclick="window.openRating()">
+    <div class="btn-icon-circle">📝</div>
+    <div class="btn-pill-text">⭐ פרגנו לנו ב-5 כוכבים</div>
+</div>
 
-    <div id="thankYouMsg" style="display:none; color:var(--success); font-size:0.8rem; margin-top:10px; font-weight:bold;"></div>
+<!-- תיבת הדירוג החכמה -->
+<div class="rating-overlay" id="ratingOverlay">
+    <div class="rating-box">
+        <div style="text-align: left; cursor: pointer;" onclick="window.closeRating()">✕</div>
+        <h3>איך הייתה החוויה שלכם? 🍸</h3>
+        <div class="stars" id="starContainer">
+            <span class="star" data-v="1">★</span>
+            <span class="star" data-v="2">★</span>
+            <span class="star" data-v="3">★</span>
+            <span class="star" data-v="4">★</span>
+            <span class="star" data-v="5">★</span>
+        </div>
+        <div id="feedbackForm" style="display:none;">
+            <textarea id="feedbackMsg" rows="3" placeholder="נשמח לשמוע מה אפשר לשפר..."></textarea>
+            <button onclick="sendFeedback()" style="background:var(--primary); color:white; border:none; padding:10px 20px; border-radius:8px; width:100%; cursor:pointer;">שלח משוב</button>
+        </div>
+        <div id="thankYou" style="display:none; color:var(--accent); font-weight:bold;">
+            תודה רבה! מעריכים את זה מאוד.
+        </div>
+    </div>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, onSnapshot, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyDYZxPjSML1gHTTANx0Fp6TlhI5_ookHNU",
@@ -127,39 +156,34 @@
     const db = getFirestore(app);
     const googleLink = "https://search.google.com/local/writereview?placeid=ChIJ7ZiYNuRTHBURotvjTJOhuHs";
 
-    // לוגיקת כוכבים מאובטחת
+    // לוגיקת דירוג
+    window.openRating = () => document.getElementById('ratingOverlay').style.display = 'flex';
+    window.closeRating = () => document.getElementById('ratingOverlay').style.display = 'none';
+
     const stars = document.querySelectorAll('.star');
-    stars.forEach(star => {
-        star.addEventListener('click', () => {
-            const val = parseInt(star.getAttribute('data-value'));
-            stars.forEach((s, i) => s.classList.toggle('active', i < val));
+    stars.forEach(s => {
+        s.onclick = () => {
+            const val = parseInt(s.dataset.v);
+            stars.forEach((st, i) => st.classList.toggle('active', i < val));
 
             if (val >= 4) {
-                document.getElementById('thankYouMsg').innerText = "מעולה! מעבירים אתכם לגוגל...";
-                document.getElementById('thankYouMsg').style.display = 'block';
-                document.getElementById('lowRatingFeedback').style.display = 'none';
-                setTimeout(() => { window.open(googleLink, '_blank'); }, 1000);
+                document.getElementById('thankYou').innerText = "איזה כיף! מעבירים אתכם לגוגל...";
+                document.getElementById('thankYou').style.display = 'block';
+                setTimeout(() => { window.open(googleLink, '_blank'); window.closeRating(); }, 1200);
             } else {
-                document.getElementById('lowRatingFeedback').style.display = 'block';
-                document.getElementById('thankYouMsg').style.display = 'none';
+                document.getElementById('feedbackForm').style.display = 'block';
             }
-        });
+        };
     });
 
-    window.closeReview = () => {
-        document.getElementById('reviewCard').style.transform = 'translateX(-150%)';
-        setTimeout(() => { document.getElementById('reviewCard').style.display = 'none'; }, 500);
-    };
-
     window.sendFeedback = () => {
-        document.getElementById('lowRatingFeedback').style.display = 'none';
-        const msg = document.getElementById('thankYouMsg');
-        msg.innerText = "תודה! המשוב התקבל.";
-        msg.style.display = 'block';
-        setTimeout(window.closeReview, 2000);
+        document.getElementById('feedbackForm').style.display = 'none';
+        document.getElementById('thankYou').innerText = "תודה על הכנות, המשוב התקבל.";
+        document.getElementById('thankYou').style.display = 'block';
+        setTimeout(window.closeRating, 2000);
     };
 
-    // סנכרון תפריט
+    // בניית תפריט (זהה לקוד הקודם)
     let allItems = [];
     const preferredOrder = ['Starters', 'Burgers', 'Cocktails', 'Beer'];
     const categoryNames = {'Starters': 'ראשונות', 'Burgers': 'המבורגרים', 'Cocktails': 'קוקטיילים', 'Beer': 'שתייה קלה'};
@@ -227,15 +251,6 @@
             if (sec) observer.observe(sec);
         });
     }
-
-    onSnapshot(doc(db, "settings", "global"), (docSnap) => {
-        if (docSnap.exists()) {
-            const data = docSnap.data();
-            const banner = document.getElementById('promoBanner');
-            banner.innerText = data.promoText || "";
-            banner.style.display = data.promoText ? 'block' : 'none';
-        }
-    });
 </script>
 </body>
 </html>
