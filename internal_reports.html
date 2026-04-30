@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>דוחות פנימיים - Hevres Bar</title>
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --bg: #0f172a; --card: #1e293b; --primary: #3b82f6; --danger: #ef4444; }
+        body { font-family: 'Assistant', sans-serif; background: var(--bg); color: white; padding: 20px; max-width: 800px; margin: 0 auto; }
+        
+        .header-box { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid #334155; padding-bottom: 20px; }
+        
+        .report-card { background: var(--card); padding: 20px; border-radius: 12px; margin-bottom: 15px; border-right: 5px solid var(--primary); animation: fadeIn 0.5s ease; }
+        .rating-stars { color: #fbbf24; font-size: 1.2rem; }
+        .date { font-size: 0.8rem; color: #94a3b8; }
+        .feedback { margin-top: 10px; font-style: italic; color: #e2e8f0; }
+
+        .btn-clear { background: var(--danger); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; font-family: inherit; transition: 0.3s; }
+        .btn-clear:hover { opacity: 0.8; transform: scale(1.05); }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+    <div class="header-box">
+        <h1>ריכוז ביקורות - Hevres Bar 📝</h1>
+        <button class="btn-clear" onclick="window.clearAllReviews()">ניקוי ואיפוס רשימה</button>
+    </div>
+
+    <div id="reviews-list">טוען ביקורות...</div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, collection, query, orderBy, limit, onSnapshot, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDYZxPjSML1gHTTANx0Fp6TlhI5_ookHNU",
+            authDomain: "hevresbar.firebaseapp.com",
+            projectId: "hevresbar",
+            storageBucket: "hevresbar.firebasestorage.app",
+            messagingSenderId: "737238391891",
+            appId: "1:737238391891:web:ad0076917e2f7133eb7aa6"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // אבטחה: מוודא שרק אתה (המחובר) יכול לראות את הדף
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                alert("גישה חסומה. יש להתחבר דרך דף הניהול.");
+                window.location.href = "admin.html";
+            }
+        });
+
+        const q = query(collection(db, "user_reviews"), orderBy("createdAt", "desc"), limit(100));
+
+        onSnapshot(q, (snapshot) => {
+            const list = document.getElementById('reviews-list');
+            if (snapshot.empty) {
+                list.innerHTML = '<p style="text-align:center; color:#94a3b8;">אין ביקורות חדשות כרגע.</p>';
+                return;
+            }
+            list.innerHTML = '';
+            snapshot.forEach(docSnap => {
+                const data = docSnap.data();
+                const date = data.createdAt ? data.createdAt.toDate().toLocaleDateString('he-IL') : 'זה עתה';
+                
+                list.innerHTML += `
+                    <div class="report-card">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <div class="rating-stars">${'★'.repeat(data.rating)}${'☆'.repeat(5-data.rating)}</div>
+                            <div class="date">${date}</div>
+                        </div>
+                        <div class="feedback">"${data.feedback || 'ללא מלל'}"</div>
+                    </div>
+                `;
+            });
+        });
+
+        // פונקציית המחיקה (איפוס)
+        window.clearAllReviews = async () => {
+            if (confirm("האם אתה בטוח שברצונך למחוק את כל הביקורות? (וודא שסיכמת את הנתונים לדו\"ח החודשי לפני)")) {
+                const snapshot = await getDocs(collection(db, "user_reviews"));
+                const deletePromises = snapshot.docs.map(docSnap => deleteDoc(doc(db, "user_reviews", docSnap.id)));
+                
+                await Promise.all(deletePromises);
+                alert("הרשימה אופסה בהצלחה!");
+            }
+        };
+    </script>
+</body>
+</html>
