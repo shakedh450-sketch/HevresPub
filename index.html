@@ -15,6 +15,8 @@
             --danger: #ef4444;
         }
 
+        html { scroll-behavior: smooth; }
+
         body {
             font-family: 'Assistant', sans-serif;
             background-color: var(--bg);
@@ -34,7 +36,7 @@
             display: none;
             position: sticky;
             top: 0;
-            z-index: 1000;
+            z-index: 1001;
             box-shadow: 0 2px 10px rgba(0,0,0,0.3);
         }
 
@@ -57,25 +59,23 @@
 
         .container { max-width: 800px; margin: 0 auto; padding: 20px; }
 
-        .search-container { margin-bottom: 20px; }
-        #searchInput {
-            width: 100%;
-            padding: 15px;
-            border-radius: 12px;
-            border: none;
-            background: var(--card);
-            color: white;
-            font-size: 1rem;
-            outline: none;
+        /* סרגל קטגוריות דביק */
+        .categories-wrapper {
+            position: sticky;
+            top: 0; /* יתמגנט לראש הדף (או מתחת לבאנר המבצעים) */
+            background: var(--bg);
+            z-index: 1000;
+            padding: 15px 0;
+            border-bottom: 1px solid #1e293b;
+            margin-bottom: 20px;
         }
 
         .categories-container {
             display: flex;
             gap: 10px;
             overflow-x: auto;
-            padding-bottom: 15px;
-            margin-bottom: 20px;
             scrollbar-width: none;
+            padding: 0 20px;
         }
 
         .cat-btn {
@@ -92,9 +92,24 @@
         .cat-btn.active {
             background: var(--primary);
             border-color: var(--primary);
+            transform: scale(1.05);
         }
 
-        .menu-grid { display: grid; gap: 20px; }
+        /* עיצוב המקטעים */
+        .category-section {
+            padding-top: 20px;
+            margin-bottom: 40px;
+        }
+
+        .category-title {
+            font-size: 1.5rem;
+            color: var(--accent);
+            margin-bottom: 20px;
+            border-right: 4px solid var(--primary);
+            padding-right: 15px;
+        }
+
+        .menu-grid { display: grid; gap: 15px; }
 
         .menu-item {
             background: var(--card);
@@ -103,17 +118,21 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            animation: fadeIn 0.5s ease;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        .item-info h3 { margin: 0 0 5px 0; font-size: 1.1rem; }
+        .item-info p { margin: 0; color: #94a3b8; font-size: 0.85rem; }
+        .item-price { font-weight: bold; color: var(--accent); }
 
-        .item-info h3 { margin: 0 0 5px 0; font-size: 1.2rem; }
-        .item-info p { margin: 0; color: #94a3b8; font-size: 0.9rem; }
-        .item-price { font-weight: bold; color: var(--accent); font-size: 1.1rem; }
+        #searchInput {
+            width: 100%;
+            padding: 15px;
+            border-radius: 12px;
+            border: none;
+            background: var(--card);
+            color: white;
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
@@ -122,23 +141,23 @@
 
 <header>
     <h1>HEVRES BAR</h1>
-    <p id="subHeader">Afula • Good Vibes • Better Drinks</p>
+    <p>Afula • Good Vibes • Better Drinks</p>
     <div id="kitchenBadge"></div>
 </header>
 
 <div class="container">
-    <div class="search-container">
-        <input type="text" id="searchInput" placeholder="חפשו מנה או קוקטייל...">
+    <input type="text" id="searchInput" placeholder="חפשו מנה או קוקטייל...">
+    
+    <div class="categories-wrapper">
+        <div id="categories-container" class="categories-container"></div>
     </div>
 
-    <div id="categories-container" class="categories-container"></div>
-
-    <div id="menu-grid" class="menu-grid"></div>
+    <div id="menu-content"></div>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, getDocs, onSnapshot, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, collection, onSnapshot, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyDYZxPjSML1gHTTANx0Fp6TlhI5_ookHNU",
@@ -153,99 +172,109 @@
     const db = getFirestore(app);
 
     let allItems = [];
-    let currentCategory = 'all';
-
+    const preferredOrder = ['Starters', 'Burgers', 'Cocktails', 'Beer'];
     const categoryNames = {
-        'all': 'הכל',
         'Starters': 'ראשונות',
         'Burgers': 'המבורגרים',
         'Cocktails': 'קוקטיילים',
         'Beer': 'שתייה קלה'
     };
 
-    // האזנה להגדרות גלובליות (מבצעים וסטטוס מטבח)
+    // האזנה להגדרות גלובליות
     onSnapshot(doc(db, "settings", "global"), (docSnap) => {
         if (docSnap.exists()) {
             const data = docSnap.data();
-            
-            // עדכון באנר מבצע
             const banner = document.getElementById('promoBanner');
-            if (data.promoText) {
-                banner.innerText = data.promoText;
-                banner.style.display = 'block';
-            } else {
-                banner.style.display = 'none';
-            }
+            banner.innerText = data.promoText || "";
+            banner.style.display = data.promoText ? 'block' : 'none';
 
-            // עדכון הודעת עומס
             const badge = document.getElementById('kitchenBadge');
             if (data.kitchenStatus === 'busy') {
-                badge.innerHTML = '<span class="kitchen-status-badge" style="background:var(--accent); color:#000;">עומס קל במטבח - ייתכן עיכוב</span>';
+                badge.innerHTML = '<span class="kitchen-status-badge" style="background:var(--accent); color:#000;">עומס קל במטבח</span>';
             } else if (data.kitchenStatus === 'very-busy') {
-                badge.innerHTML = '<span class="kitchen-status-badge" style="background:var(--danger); color:#fff;">עומס כבד - המטבח סגור זמנית</span>';
-            } else {
-                badge.innerHTML = '';
-            }
+                badge.innerHTML = '<span class="kitchen-status-badge" style="background:var(--danger); color:#fff;">מטבח סגור זמנית</span>';
+            } else { badge.innerHTML = ''; }
         }
     });
 
-    // האזנה למנות בזמן אמת (Live Update)
-    onSnapshot(collection(db, "menu_hevres"), (querySnapshot) => {
-        allItems = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    // האזנה למנות ובניית התפריט
+    onSnapshot(collection(db, "menu_hevres"), (snap) => {
+        allItems = snap.docs.map(d => ({ id: d.id, ...d.data() }));
         renderTabs();
-        renderMenu(allItems);
+        renderMenu();
+        setupScrollSpy();
     });
 
     function renderTabs() {
         const container = document.getElementById('categories-container');
-        const preferredOrder = ['all', 'Starters', 'Burgers', 'Cocktails', 'Beer'];
-        
-        container.innerHTML = preferredOrder.map(cat => {
-            const isActive = currentCategory === cat ? 'active' : '';
-            return `<button class="cat-btn ${isActive}" onclick="window.filterByCategory('${cat}')">${categoryNames[cat] || cat}</button>`;
-        }).join('');
-    }
-
-    function renderMenu(items) {
-        const grid = document.getElementById('menu-grid');
-        
-        const filtered = items.filter(item => {
-            const matchesCategory = currentCategory === 'all' || item.category === currentCategory;
-            const isAvailable = item.isAvailable !== false; 
-            return matchesCategory && isAvailable;
-        });
-
-        if (filtered.length === 0) {
-            grid.innerHTML = '<p style="text-align:center; width:100%; color:#94a3b8; margin-top:20px;">אין מנות זמינות כרגע בקטגוריה זו</p>';
-            return;
-        }
-
-        grid.innerHTML = filtered.map(item => `
-            <div class="menu-item">
-                <div class="item-info">
-                    <h3>${item.name}</h3>
-                    <p>${item.desc || ''}</p>
-                </div>
-                <div class="item-price">₪${item.price}</div>
-            </div>
+        container.innerHTML = preferredOrder.map(cat => `
+            <button class="cat-btn" id="tab-${cat}" onclick="window.scrollToCategory('${cat}')">${categoryNames[cat]}</button>
         `).join('');
     }
 
-    window.filterByCategory = (category) => {
-        currentCategory = category;
-        renderTabs();
-        renderMenu(allItems);
+    function renderMenu(filterTerm = "") {
+        const content = document.getElementById('menu-content');
+        content.innerHTML = preferredOrder.map(cat => {
+            const catItems = allItems.filter(i => 
+                i.category === cat && 
+                i.isAvailable !== false &&
+                (i.name.toLowerCase().includes(filterTerm) || (i.desc && i.desc.toLowerCase().includes(filterTerm)))
+            );
+
+            if (catItems.length === 0) return '';
+
+            return `
+                <section id="section-${cat}" class="category-section">
+                    <h2 class="category-title">${categoryNames[cat]}</h2>
+                    <div class="menu-grid">
+                        ${catItems.map(item => `
+                            <div class="menu-item">
+                                <div class="item-info">
+                                    <h3>${item.name}</h3>
+                                    <p>${item.desc || ''}</p>
+                                </div>
+                                <div class="item-price">₪${item.price}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </section>
+            `;
+        }).join('');
+    }
+
+    window.scrollToCategory = (cat) => {
+        const el = document.getElementById(`section-${cat}`);
+        if (el) {
+            const offset = 100;
+            const top = el.getBoundingClientRect().top + window.pageYOffset - offset;
+            window.scrollTo({ top, behavior: 'smooth' });
+        }
     };
 
+    function setupScrollSpy() {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const cat = entry.target.id.replace('section-', '');
+                    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+                    const activeTab = document.getElementById(`tab-${cat}`);
+                    if (activeTab) {
+                        activeTab.classList.add('active');
+                        activeTab.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+                    }
+                }
+            });
+        }, { rootMargin: '-100px 0px -70% 0px' });
+
+        preferredOrder.forEach(cat => {
+            const section = document.getElementById(`section-${cat}`);
+            if (section) observer.observe(section);
+        });
+    }
+
     document.getElementById('searchInput').addEventListener('input', (e) => {
-        const term = e.target.value.toLowerCase();
-        const filtered = allItems.filter(item => 
-            (item.name.toLowerCase().includes(term) || (item.desc && item.desc.toLowerCase().includes(term))) &&
-            (item.isAvailable !== false)
-        );
-        renderMenu(filtered);
+        renderMenu(e.target.value.toLowerCase());
     });
 </script>
-
 </body>
 </html>
