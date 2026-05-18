@@ -25,7 +25,7 @@
 
     <div class="header-box">
         <h1>ריכוז ביקורות - Hevres Bar 📝</h1>
-        <button class="btn-clear" onclick="window.clearAllReviews()">ниקוי ואיפוס רשימה</button>
+        <button class="btn-clear" onclick="window.clearAllReviews()">ניקוי ואיפוס רשימה</button>
     </div>
 
     <div id="reviews-list">טוען ביקורות...</div>
@@ -33,7 +33,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, collection, query, orderBy, limit, onSnapshot, getDocs, deleteDoc, doc, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, query, onSnapshot, getDocs, deleteDoc, doc, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDYZxPjSML1gHTTANx0Fp6TlhI5_ookHNU",
@@ -56,8 +56,8 @@
             }
         });
 
-        // שאילתה מעודכנת השולפת רק את חברס מתוך האוסף המורשה
-        const q = query(collection(db, "reviews"), where("businessId", "==", B_ID), orderBy("timestamp", "desc"), limit(100));
+        // הסרנו את ה-orderBy מכאן כדי לא לדרוש אינדקס מורכב בשרת
+        const q = query(collection(db, "reviews"), where("businessId", "==", B_ID));
 
         onSnapshot(q, (snapshot) => {
             const list = document.getElementById('reviews-list');
@@ -65,9 +65,19 @@
                 list.innerHTML = '<p style="text-align:center; color:#94a3b8;">אין ביקורות חדשות כרגע.</p>';
                 return;
             }
+            
+            // ממירים את המסמכים למערך אובייקטים
+            const reviewsArray = snapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
+            
+            // מבצעים את המיון בצד הלקוח (מהחדש לישן) לפי ה-timestamp
+            reviewsArray.sort((a, b) => {
+                const timeA = a.timestamp ? a.timestamp.toMillis() : 0;
+                const timeB = b.timestamp ? b.timestamp.toMillis() : 0;
+                return timeB - timeA;
+            });
+
             list.innerHTML = '';
-            snapshot.forEach(docSnap => {
-                const data = docSnap.data();
+            reviewsArray.forEach(data => {
                 const date = data.timestamp ? data.timestamp.toDate().toLocaleDateString('he-IL') : 'זה עתה';
                 
                 list.innerHTML += `
