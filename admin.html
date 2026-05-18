@@ -3,225 +3,216 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Control Center - Hevres Bar</title>
-    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;700&display=swap" rel="stylesheet">
+    <title>חברס | פאנל ניהול תפריט</title>
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #0f172a; --card: #1e293b; --text: #f1f5f9;
-            --primary: #3b82f6; --danger: #ef4444; --success: #10b981; --accent: #fbbf24;
+            --primary-blue: #007bff;
+            --primary-orange: #ff9800;
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --text-color: #ffffff;
+            --border-color: #333333;
+            --danger-color: #dc3545;
+            --success-color: #28a745;
         }
 
-        body { font-family: 'Assistant', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; min-height: 100vh; }
+        body { font-family: 'Assistant', sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
         
-        /* מסך לוגין */
-        .login-container { display: flex; align-items: center; justify-content: center; min-height: 100vh; }
-        .login-box { background: var(--card); padding: 30px; border-radius: 20px; width: 90%; max-width: 350px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
-        
-        /* תוכן ניהול */
-        .admin-content { display: none; max-width: 900px; margin: 0 auto; padding: 20px; }
-        
-        .status-bar { 
-            display: grid; grid-template-columns: 1fr 1fr; gap: 15px; 
-            background: #1e293b; padding: 20px; border-radius: 16px; margin-bottom: 30px;
-            border: 1px solid #334155;
-        }
+        header { text-align: center; margin-bottom: 40px; border-bottom: 1px solid var(--border-color); padding-bottom: 20px; }
+        header h1 { color: var(--primary-orange); margin: 0; font-size: 2.5rem; }
+        header p { color: #aaa; margin: 5px 0 0 0; }
 
-        .status-box h4 { margin: 0 0 10px 0; font-size: 0.9rem; color: #94a3b8; }
-        input, select, textarea { 
-            width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #475569; 
-            background: #0f172a; color: white; font-family: inherit; box-sizing: border-box;
-        }
+        .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 15px; padding: 25px; margin-bottom: 25px; }
+        .card h2 { margin-top: 0; color: var(--primary-orange); border-bottom: 1px solid #333; padding-bottom: 10px; font-size: 1.5rem; }
 
-        .admin-grid { display: grid; gap: 15px; }
-        .admin-card { 
-            background: var(--card); padding: 15px; border-radius: 12px;
-            display: flex; justify-content: space-between; align-items: center;
-            border-right: 5px solid var(--primary);
-        }
-        .admin-card.out-of-stock { border-right-color: var(--danger); opacity: 0.6; }
+        label { display: block; margin-bottom: 8px; font-weight: bold; color: #ccc; }
+        input[type="text"], textarea { width: 100%; padding: 12px; background: #111; border: 1px solid var(--border-color); border-radius: 8px; color: white; font-family: inherit; box-sizing: border-box; margin-bottom: 15px; }
+        textarea { height: 180px; resize: vertical; font-family: monospace; font-size: 0.9rem; }
 
-        .actions { display: flex; gap: 10px; align-items: center; }
+        .btn { padding: 12px 24px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1rem; transition: 0.2s; display: inline-flex; align-items: center; gap: 8px; }
+        .btn-primary { background: var(--primary-orange); color: black; }
+        .btn-danger { background: var(--danger-color); color: white; }
+        .btn-success { background: var(--success-color); color: white; }
+        .btn:hover { opacity: 0.9; transform: translateY(-1px); }
+
+        /* קבוצת כפתורים */
+        .btn-group { display: flex; gap: 10px; flex-wrap: wrap; }
+
+        /* רשימת מנות קיימות */
+        .item-row { display: flex; justify-content: space-between; align-items: center; background: #151515; padding: 12px 15px; border-radius: 8px; margin-bottom: 8px; border: 1px solid #252525; }
+        .item-info { display: flex; flex-direction: column; }
+        .item-name { font-weight: bold; }
+        .item-meta { font-size: 0.85rem; color: #888; margin-top: 3px; }
         
-        .switch { position: relative; display: inline-block; width: 44px; height: 22px; }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #475569; transition: .4s; border-radius: 22px; }
-        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
-        input:checked + .slider { background-color: var(--success); }
-        input:checked + .slider:before { transform: translateX(22px); }
-
-        .price-tag { background: #334155; padding: 5px 10px; border-radius: 6px; font-weight: bold; color: var(--accent); cursor: pointer; }
-        .btn-add { background: var(--primary); color: white; padding: 12px 24px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; }
-        
-        .modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--card); padding: 25px; border-radius: 20px; z-index: 100; width: 90%; max-width: 400px; box-shadow: 0 0 50px rgba(0,0,0,0.5); }
-        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 99; }
+        .status-badge { padding: 4px 8px; border-radius: 12px; font-size: 0.8rem; font-weight: bold; cursor: pointer; }
+        .status-available { background: rgba(40, 167, 69, 0.2); color: #28a745; border: 1px solid #28a745; }
+        .status-unavailable { background: rgba(220, 53, 69, 0.2); color: #dc3545; border: 1px solid #dc3545; }
     </style>
 </head>
 <body>
 
-<div id="loginSection" class="login-container">
-    <div class="login-box">
-        <h2>כניסת מנהל 🍸</h2>
-        <input type="email" id="loginEmail" placeholder="אימייל">
-        <input type="password" id="loginPassword" placeholder="סיסמה">
-        <button onclick="window.login()" class="btn-add" style="width:100%; margin-top:15px;">התחבר</button>
-        <p id="loginError" style="color:var(--danger); font-size:0.8rem; margin-top:10px;"></p>
-    </div>
-</div>
+    <div class="container">
+        <header>
+            <h1>חברס | פאנל ניהול ועדכון תפריט</h1>
+            <p>מערכת הזרקת נתונים ועדכון סטטוס מנות בזמן אמת</p>
+        </header>
 
-<div id="adminSection" class="admin-content">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <h2>Control Center 🍸</h2>
-        <div style="display:flex; gap:10px;">
-            <button class="btn-add" onclick="openModal()">+ מנה חדשה</button>
-            <button onclick="window.logout()" style="background:#475569; border:none; color:white; padding:10px; border-radius:12px; cursor:pointer;">התנתק</button>
+        <div class="card">
+            <h2>📢 עדכון שורת קודם / מבזק</h2>
+            <label for="promo-input">טקסט שיווקי בראש התפריט:</label>
+            <input type="text" id="promo-input" placeholder="לדוגמה: בר בשרים איכותי בעפולה">
+            <button class="btn btn-success" onclick="window.updatePromoText()">שמור עדכון</button>
+        </div>
+
+        <div class="card">
+            <h2>🚀 הזרקת תפריט קבוצתי (JSON)</h2>
+            <p style="font-size: 0.9rem; color: #aaa; margin-bottom: 15px;">הדבק כאן את מערך המנות המעודכן שקיבלת מהצ'אט. הפעולה תשמור את המנות תחת מפתח העסק של חברס.</p>
+            <textarea id="json-input" placeholder="[&#10;  { 'name': 'מנה לדוגמה', 'price': 50, 'category': 'המבורגרים' }&#10;]"></textarea>
+            
+            <div class="btn-group">
+                <button class="btn btn-primary" onclick="window.injectData()">הזרק נתונים חדשים</button>
+                <button class="btn btn-danger" onclick="window.clearMenu()">🗑️ ניקוי תפריט קיים</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>📋 מנות קיימות במערכת (<span id="items-count">0</span>)</h2>
+            <div id="current-menu-list">
+                <p style="color: #666; text-align: center;">טוען מנות מהשרת...</p>
+            </div>
         </div>
     </div>
 
-    <div class="status-bar">
-        <div class="status-box">
-            <h4>מבצע רץ (באנר עליון)</h4>
-            <input type="text" id="promoText" placeholder="לדוגמה: 1+1 עד השעה 20:00" onchange="window.updateGlobalSettings()">
-        </div>
-        <div class="status-box">
-            <h4>עומס מטבח</h4>
-            <select id="kitchenStatus" onchange="window.updateGlobalSettings()">
-                <option value="normal">מצב רגיל</option>
-                <option value="busy">עומס קל</option>
-                <option value="very-busy">עומס כבד</option>
-            </select>
-        </div>
-    </div>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, query, where, onSnapshot, doc, setDoc, deleteDoc, writeBatch, getDocs, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    <div id="admin-grid" class="admin-grid"></div>
-</div>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDYZxPjSML1gHTTANx0Fp6TlhI5_ookHNU",
+            authDomain: "hevresbar.firebaseapp.com",
+            projectId: "hevresbar",
+            storageBucket: "hevresbar.firebasestorage.app",
+            messagingSenderId: "737238391891",
+            appId: "1:737238391891:web:ad0076917e2f7133eb7aa6"
+        };
 
-<div class="overlay" id="overlay" onclick="closeModal()"></div>
-<div class="modal" id="itemModal">
-    <h3>מנה חדשה</h3>
-    <input type="text" id="itemName" placeholder="שם המנה" style="margin-bottom:10px;">
-    <input type="number" id="itemPrice" placeholder="מחיר" style="margin-bottom:10px;">
-    <select id="itemCategory" style="margin-bottom:10px;">
-        <option value="Starters">ראשונות</option>
-        <option value="Burgers">המבורגרים</option>
-        <option value="Cocktails">קוקטיילים</option>
-        <option value="Beer">שתייה קלה</option>
-    </select>
-    <textarea id="itemDesc" placeholder="תיאור..." style="margin-bottom:10px;"></textarea>
-    <button onclick="saveItem()" class="btn-add" style="width:100%;">שמור מנה</button>
-</div>
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        
+        // מפתח ההפרדה הייחודי של חברס
+        const B_ID = "hevres";
 
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, collection, doc, onSnapshot, updateDoc, setDoc, getDoc, addDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        let currentItems = [];
 
-    const firebaseConfig = {
-        apiKey: "AIzaSyDYZxPjSML1gHTTANx0Fp6TlhI5_ookHNU",
-        authDomain: "hevresbar.firebaseapp.com",
-        projectId: "hevresbar",
-        storageBucket: "hevresbar.firebasestorage.app",
-        messagingSenderId: "737238391891",
-        appId: "1:737238391891:web:ad0076917e2f7133eb7aa6"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-
-    // ניהול מצב התחברות
-    onAuthStateChanged(auth, (user) => {
-        if (user) {
-            document.getElementById('loginSection').style.display = 'none';
-            document.getElementById('adminSection').style.display = 'block';
-            initAdmin();
-        } else {
-            document.getElementById('loginSection').style.display = 'flex';
-            document.getElementById('adminSection').style.display = 'none';
-        }
-    });
-
-    window.login = async () => {
-        const email = document.getElementById('loginEmail').value;
-        const pass = document.getElementById('loginPassword').value;
-        try {
-            await signInWithEmailAndPassword(auth, email, pass);
-        } catch (e) {
-            document.getElementById('loginError').innerText = "פרטים שגויים";
-        }
-    };
-
-    window.logout = () => signOut(auth);
-
-    function initAdmin() {
-        // טעינת הגדרות
-        getDoc(doc(db, "settings", "global")).then(s => {
-            if(s.exists()){
-                document.getElementById('promoText').value = s.data().promoText || "";
-                document.getElementById('kitchenStatus').value = s.data().kitchenStatus || "normal";
-            }
+        // טעינת הגדרות קיימות
+        onSnapshot(doc(db, "settings", B_ID), (s) => {
+            if(s.exists()) document.getElementById('promo-input').value = s.data().promoText || "";
         });
 
-        // האזנה למנות
-        onSnapshot(collection(db, "menu_hevres"), (snap) => {
-            const grid = document.getElementById('admin-grid');
-            grid.innerHTML = '';
-            snap.forEach(d => {
-                const item = d.data();
-                const isOut = item.isAvailable === false;
-                const card = document.createElement('div');
-                card.className = `admin-card ${isOut ? 'out-of-stock' : ''}`;
-                card.innerHTML = `
-                    <div>
-                        <h3>${item.name}</h3>
-                        <p>${item.category}</p>
-                    </div>
-                    <div class="actions">
-                        <div class="price-tag" onclick="window.changePrice('${d.id}', ${item.price})">₪${item.price}</div>
-                        <label class="switch">
-                            <input type="checkbox" ${!isOut ? 'checked' : ''} onchange="window.toggleStock('${d.id}', this.checked)">
-                            <span class="slider"></span>
-                        </label>
-                        <button onclick="window.deleteItem('${d.id}')" style="background:none; border:none; cursor:pointer;">🗑️</button>
+        // האזנה למנות קיימות
+        const q = query(collection(db, "menus"), where("businessId", "==", B_ID));
+        onSnapshot(q, (s) => {
+            currentItems = s.docs.map(d => ({ id: d.id, ...d.data() }));
+            document.getElementById('items-count').innerText = currentItems.length;
+            renderAdminMenu();
+        });
+
+        // עדכון טקסט מבזק
+        window.updatePromoText = async () => {
+            const text = document.getElementById('promo-input').value;
+            try {
+                await setDoc(doc(db, "settings", B_ID), { promoText: text }, { merge: true });
+                alert("הטקסט השיווקי עודכן בהצלחה!");
+            } catch (err) {
+                alert("שגיאה בעדכון: " + err.message);
+            }
+        };
+
+        // הזרקת מערך מנות חדש
+        window.injectData = async () => {
+            const rawJson = document.getElementById('json-input').value;
+            if(!rawJson) return alert("אנא הדבק קוד JSON תחילה");
+
+            try {
+                const parsed = JSON.parse(rawJson);
+                if(!Array.isArray(parsed)) return alert("הקוד חייב להיות מערך (להתחיל ב-[ ולהסתיים ב-])");
+
+                const batch = writeBatch(db);
+                parsed.forEach(item => {
+                    // יצירת מזהה מסמך ייחודי לפי שם הקטגוריה והמנה כדי למנוע כפילויות
+                    const cleanName = item.name.replace(/[^a-zA-Z0-9א-ת]/g, "");
+                    const docId = `${B_ID}_${cleanName}`;
+                    const docRef = doc(collection(db, "menus"), docId);
+                    
+                    batch.set(docRef, {
+                        ...item,
+                        businessId: B_ID,
+                        isAvailable: item.isAvailable !== false
+                    });
+                });
+
+                await batch.commit();
+                alert(`הוזרקו בהצלחה ${parsed.length} מנות לחשבון חברס!`);
+                document.getElementById('json-input').value = "";
+            } catch (err) {
+                alert("שגיאה בפענוח ה-JSON, ודא שהעתקת את הקוד במלואו: " + err.message);
+            }
+        };
+
+        // מחיקת כל התפריט הקיים של חברס
+        window.clearMenu = async () => {
+            if(!confirm("האם אתה בטוח שברצונך למחוק את כל המנות של חברס? פעולה זו אינה ניתנת לביטול!")) return;
+
+            try {
+                const snapshot = await getDocs(query(collection(db, "menus"), where("businessId", "==", B_ID)));
+                const batch = writeBatch(db);
+                
+                snapshot.docs.forEach(doc => batch.delete(doc.ref));
+                await batch.commit();
+                alert("כל המנות של חברס נמחקו מהשרת.");
+            } catch (err) {
+                alert("שגיאה במחיקה: " + err.message);
+            }
+        };
+
+        // שינוי סטטוס זמינות מנה (במלאי / חסר)
+        window.toggleAvailability = async (id, currentStatus) => {
+            try {
+                await updateDoc(doc(db, "menus", id), { isAvailable: !currentStatus });
+            } catch (err) {
+                alert("שגיאה בעדכון הסטטוס: " + err.message);
+            }
+        };
+
+        // רינדור רשימת המנות בפאנל
+        function renderAdminMenu() {
+            const container = document.getElementById('current-menu-list');
+            if(currentItems.length === 0) {
+                container.innerHTML = `<p style="color: #666; text-align: center;">אין מנות קיימות בתפריט של חברס.</p>`;
+                return;
+            }
+
+            // מיון לפי קטגוריות לנוחות המשתמש
+            currentItems.sort((a,b) => a.category.localeCompare(b.category));
+
+            container.innerHTML = currentItems.map(i => {
+                const isAvail = i.isAvailable !== false;
+                return `
+                    <div class="item-row">
+                        <div class="item-info">
+                            <span class="item-name">${i.name}</span>
+                            <span class="item-meta">${i.category} | ₪${i.price}</span>
+                        </div>
+                        <span class="status-badge ${isAvail ? 'status-available' : 'status-unavailable'}" 
+                              onclick="window.toggleAvailability('${i.id}', ${isAvail})">
+                            ${isAvail ? '🟢 במלאי' : '🔴 חסר במלאי'}
+                        </span>
                     </div>
                 `;
-                grid.appendChild(card);
-            });
-        });
-    }
-
-    window.updateGlobalSettings = async () => {
-        await setDoc(doc(db, "settings", "global"), {
-            promoText: document.getElementById('promoText').value,
-            kitchenStatus: document.getElementById('kitchenStatus').value
-        });
-    };
-
-    window.toggleStock = async (id, isAvailable) => {
-        await updateDoc(doc(db, "menu_hevres", id), { isAvailable });
-    };
-
-    window.changePrice = async (id, old) => {
-        const p = prompt("מחיר חדש:", old);
-        if(p) await updateDoc(doc(db, "menu_hevres", id), { price: Number(p) });
-    };
-
-    window.deleteItem = async (id) => {
-        if(confirm("למחוק?")) await deleteDoc(doc(db, "menu_hevres", id));
-    };
-
-    window.saveItem = async () => {
-        const name = document.getElementById('itemName').value;
-        const price = Number(document.getElementById('itemPrice').value);
-        if(!name || !price) return;
-        await addDoc(collection(db, "menu_hevres"), {
-            name, price, category: document.getElementById('itemCategory').value,
-            desc: document.getElementById('itemDesc').value, isAvailable: true
-        });
-        closeModal();
-    };
-
-    window.openModal = () => { document.getElementById('itemModal').style.display='block'; document.getElementById('overlay').style.display='block'; };
-    window.closeModal = () => { document.getElementById('itemModal').style.display='none'; document.getElementById('overlay').style.display='none'; };
-</script>
+            }).join('');
+        }
+    </script>
 </body>
 </html>
