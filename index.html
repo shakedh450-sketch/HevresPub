@@ -42,21 +42,9 @@
         .item-content p { margin: 5px 0 0; font-size: 0.9rem; color: #94a3b8; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
         .item-price { font-weight: bold; color: var(--primary-orange); font-size: 1.2rem; min-width: 60px; text-align: left; }
 
-        /* Modals Setup - Absolute Grid Centering */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95); display: none !important;
-            z-index: 4000; backdrop-filter: blur(8px);
-            display: grid; place-items: center;
-        }
-        .modal-content {
-            background: var(--card-bg); border-radius: 25px; text-align: center;
-            width: calc(100% - 30px); max-width: 420px;
-            border: 1px solid var(--border-color);
-            position: relative; overflow: hidden;
-            max-height: 90vh; display: flex; flex-direction: column;
-            margin: auto;
-        }
+        /* Modals Setup */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); display: none !important; z-index: 4000; backdrop-filter: blur(8px); display: grid; place-items: center; }
+        .modal-content { background: var(--card-bg); border-radius: 25px; text-align: center; width: calc(100% - 30px); max-width: 420px; border: 1px solid var(--border-color); position: relative; overflow: hidden; max-height: 90vh; display: flex; flex-direction: column; margin: auto; }
         .large-item-image { width: 100%; height: 220px; background-size: cover; background-position: center; flex-shrink: 0; }
         .close-btn { position: absolute; top: 15px; right: 15px; font-size: 30px; color: white; cursor: pointer; z-index: 5000; background: rgba(0,0,0,0.6); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
         
@@ -70,7 +58,7 @@
 
         .btn-submit { width: 100%; padding: 16px; background: var(--primary-orange); border: none; border-radius: 14px; font-weight: bold; cursor: pointer; color: black; font-size: 1.1rem; margin-top: 20px; }
 
-        /* Floating Review & Static Stars Elements */
+        /* Review Design elements */
         .static-stars { display: flex; justify-content: center; gap: 12px; font-size: 2.5rem; cursor: pointer; margin: 15px 0; }
         .static-star { color: #333333; transition: 0.2s; }
         .static-star.active { color: var(--primary-orange); }
@@ -185,7 +173,6 @@
 
     window.addEventListener('click', () => userActionCount++, {passive: true});
 
-    // קריאת המנות מהאוסף הכללי המסונן לפי חברס
     const q = query(collection(db, "menus"), where("businessId", "==", B_ID));
     onSnapshot(q, (s) => {
         allItems = s.docs.map(d => ({ id: d.id, ...d.data() }));
@@ -301,7 +288,7 @@
         }
     };
 
-    /* לוגיקת דירוג ומשובים מסונכרנת לאוסףuser_reviews המקורי */
+    /* תיקון השליחה: משתמשים באוסף המאושר 'reviews' עם ה-B_ID הנכון */
     window.handleRating = async (rating) => {
         document.querySelectorAll('.static-star').forEach((s, i) => s.classList.toggle('active', i < rating));
         document.querySelectorAll('.modal-s').forEach((s, i) => s.classList.toggle('active', i < rating));
@@ -309,14 +296,14 @@
         if (rating >= 4) {
             window.open(googleLink, '_blank');
             try {
-                // המבנה תוקן בדיוק לשדות המורשים בחוקי האבטחה שלכם כדי שלא ייחסם
-                await addDoc(collection(db, "user_reviews"), { 
+                await addDoc(collection(db, "reviews"), { 
+                    businessId: B_ID,
                     rating: rating, 
-                    feedback: "Positive - Redirected to Google", 
-                    createdAt: serverTimestamp() 
+                    text: "Positive - Redirected to Google", 
+                    timestamp: serverTimestamp() 
                 });
             } catch (e) {
-                console.error("Firebase write error: ", e);
+                console.error("Firebase error: ", e);
             }
             window.closeFeedbackModal();
         } else {
@@ -344,10 +331,11 @@
         if(!text) return alert("נשמח אם תפרטו קצת בתיבה כדי שנדע מה לשפר...");
         
         try {
-            await addDoc(collection(db, "user_reviews"), { 
+            await addDoc(collection(db, "reviews"), { 
+                businessId: B_ID,
                 rating: window.lastRating, 
-                feedback: text, 
-                createdAt: serverTimestamp() 
+                text: text, 
+                timestamp: serverTimestamp() 
             });
             alert("המשוב התקבל, תודה על הכנות שלכם!");
         } catch (e) {
