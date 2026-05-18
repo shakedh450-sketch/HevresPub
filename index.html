@@ -3,47 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HEVRES BAR - Menu</title>
-    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;700&display=swap" rel="stylesheet">
+    <title>חברס | HEVRES BAR - תפריט דיגיטלי</title>
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #0f172a; --card: #1e293b; --text: #f1f5f9;
-            --primary: #3b82f6; --accent: #fbbf24; --orange: #ff9800;
+            --bg-color: #121212; /* רקע שחור פחם עמוק */
+            --card-bg: #1e1e1e; /* רקע כרטיסים */
+            --text-color: #ffffff; /* טקסט לבן נקי */
+            --primary-orange: #ff9800; /* הכתום-ענבר המדויק של המותג */
+            --border-color: #333333;
         }
 
         html { scroll-behavior: smooth; }
-        body { font-family: 'Assistant', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 0; line-height: 1.6; }
+        body { font-family: 'Assistant', sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 0; overflow-x: hidden; }
 
-        header { text-align: center; padding: 40px 20px; background: linear-gradient(rgba(15,23,42,0.8), rgba(15,23,42,0.8)), url('https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&q=80'); background-size: cover; background-position: center; }
-        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
+        /* Header */
+        header { text-align: center; padding: 70px 20px; background: linear-gradient(rgba(18,18,18,0.85), rgba(18,18,18,0.85)), url('https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&q=80'); background-size: cover; background-position: center; border-bottom: 1px solid var(--border-color); }
+        header h1 { color: var(--text-color); font-size: 3rem; margin: 0; font-weight: 800; letter-spacing: 1px; }
+        header p { color: var(--primary-orange); margin: 8px 0 0; font-size: 1.1rem; font-weight: 700; }
 
-        .categories-wrapper { position: sticky; top: 0; background: var(--bg); z-index: 1000; padding: 15px 0; border-bottom: 1px solid #1e293b; margin-bottom: 20px; }
-        .categories-container { display: flex; gap: 10px; overflow-x: auto; scrollbar-width: none; padding: 0 20px; }
-        .cat-btn { padding: 10px 20px; border-radius: 25px; border: 1px solid #334155; background: var(--card); color: var(--text); cursor: pointer; white-space: nowrap; transition: 0.3s; }
-        .cat-btn.active { background: var(--primary); border-color: var(--primary); }
+        .container { max-width: 800px; margin: 0 auto; padding: 0 15px; }
 
-        .category-section { padding-top: 20px; margin-bottom: 40px; }
-        .category-title { font-size: 1.5rem; color: var(--accent); margin-bottom: 20px; border-right: 4px solid var(--primary); padding-right: 15px; }
-        .menu-item { background: var(--card); padding: 20px; border-radius: 16px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .item-info h3 { margin: 0; font-size: 1.1rem; }
-        .item-info p { margin: 5px 0 0; font-size: 0.9rem; color: #94a3b8; }
-        .item-price { font-weight: bold; color: var(--accent); min-width: 50px; text-align: left; }
+        /* Navigation Tabs sticky */
+        .categories-wrapper { position: sticky; top: 0; background: var(--bg-color); z-index: 1000; padding: 15px 0; border-bottom: 1px solid var(--border-color); }
+        .categories-container { display: flex; gap: 10px; overflow-x: auto; scrollbar-width: none; padding: 0 5px; }
+        .categories-container::-webkit-scrollbar { display: none; }
+        .cat-btn { padding: 10px 22px; border-radius: 25px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-color); cursor: pointer; white-space: nowrap; transition: 0.3s; font-weight: 700; font-size: 0.95rem; }
+        .cat-btn.active { background: var(--primary-orange); color: black; border-color: var(--primary-orange); }
 
-        .floating-review-btn {
-            position: fixed; bottom: 25px; right: 25px;
-            display: flex; align-items: center; cursor: pointer; z-index: 2000;
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        /* Menu Display Grid */
+        .category-section { padding-top: 10px; margin-bottom: 30px; }
+        .category-title { font-size: 1.6rem; color: var(--primary-orange); margin-bottom: 20px; font-weight: 800; border-right: 4px solid var(--primary-orange); padding-right: 12px; }
+        .menu-grid { display: grid; gap: 15px; }
+        .menu-item { background: var(--card-bg); padding: 15px; border-radius: 16px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border-color); cursor: pointer; transition: 0.2s; min-height: 90px; }
+        .menu-item:hover { transform: translateY(-2px); border-color: #444; }
+        .item-info { flex: 1; padding-left: 15px; overflow: hidden; text-align: right; }
+        .item-info h3 { margin: 0; font-size: 1.15rem; font-weight: 700; }
+        .item-info p { margin: 5px 0 0; font-size: 0.9rem; color: #94a3b8; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .item-price { font-weight: bold; color: var(--primary-orange); font-size: 1.2rem; min-width: 60px; text-align: left; }
+
+        /* Modals Setup - Absolute Grid Centering */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95); display: none !important;
+            z-index: 4000; backdrop-filter: blur(8px);
+            display: grid; place-items: center;
         }
-        .floating-review-btn:hover { transform: scale(1.05); }
-        .btn-icon-circle { width: 55px; height: 55px; background: var(--orange); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0,0,0,0.3); z-index: 2; font-size: 1.5rem; }
-        .btn-pill-text { background: var(--orange); color: #000; font-weight: 700; padding: 10px 25px 10px 40px; border-radius: 30px; margin-right: -25px; font-size: 1rem; box-shadow: 0 4px 10px rgba(0,0,0,0.2); white-space: nowrap; }
+        .modal-content {
+            background: var(--card-bg); border-radius: 25px; text-align: center;
+            width: calc(100% - 30px); max-width: 420px;
+            border: 1px solid var(--border-color);
+            position: relative; overflow: hidden;
+            max-height: 90vh; display: flex; flex-direction: column;
+            margin: auto;
+        }
+        .large-item-image { width: 100%; height: 220px; background-size: cover; background-position: center; flex-shrink: 0; }
+        .close-btn { position: absolute; top: 15px; right: 15px; font-size: 30px; color: white; cursor: pointer; z-index: 5000; background: rgba(0,0,0,0.6); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        
+        .modal-body { overflow-y: auto; padding: 0 20px 20px 20px; scrollbar-width: none; }
+        .modal-body::-webkit-scrollbar { display: none; }
+        
+        .extras-section { border-top: 1px solid #333; padding-top: 15px; margin-top: 15px; text-align: right; }
+        #modal-item-extras { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 10px; }
+        .extra-item { display: flex; justify-content: space-between; background: #252525; padding: 10px; border-radius: 12px; border: 1px solid #333; font-size: 0.85rem; }
+        .extra-item span:last-child { color: var(--primary-orange); font-weight: bold; }
 
-        .rating-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 3000; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
-        .rating-box { background: var(--card); padding: 30px; border-radius: 20px; text-align: center; width: 90%; max-width: 350px; border: 1px solid var(--primary); }
-        .stars { display: flex; justify-content: center; gap: 10px; margin: 20px 0; font-size: 2.2rem; cursor: pointer; }
-        .star { color: #475569; transition: 0.2s; }
-        .star.active { color: var(--accent); }
-        textarea { width: 100%; background: #0f172a; color: white; border: 1px solid #475569; border-radius: 8px; padding: 10px; margin-bottom: 15px; font-family: inherit; resize: none; box-sizing: border-box; }
+        .btn-submit { width: 100%; padding: 16px; background: var(--primary-orange); border: none; border-radius: 14px; font-weight: bold; cursor: pointer; color: black; font-size: 1.1rem; margin-top: 20px; }
+
+        /* Floating Review & Static Stars Elements */
+        .static-stars { display: flex; justify-content: center; gap: 12px; font-size: 2.5rem; cursor: pointer; margin: 15px 0; }
+        .static-star { color: #333333; transition: 0.2s; }
+        .static-star.active { color: var(--primary-orange); }
+        textarea { width: 100%; background: #0f172a; color: white; border: 1px solid #475569; border-radius: 12px; padding: 12px; margin-top: 15px; font-family: inherit; resize: none; box-sizing: border-box; }
+        
+        .footer-disclaimer { text-align: center; padding: 40px 20px; color: #666; font-size: 0.85rem; border-top: 1px solid var(--border-color); background: #0a0a0a; margin-top: 40px; }
+        .review-section { background: #151515; padding: 40px 20px; text-align: center; border-top: 1px solid var(--border-color); }
+        .review-section h2 { color: var(--primary-orange); font-size: 1.6rem; margin-bottom: 5px; font-weight: 800; }
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
@@ -60,33 +96,68 @@
     <div id="menu-content"></div>
 </div>
 
-<div class="floating-review-btn" onclick="window.openRating()">
-    <div class="btn-icon-circle">📝</div>
-    <div class="btn-pill-text">⭐ פרגנו לנו ב-5 כוכבים</div>
+<div class="review-section">
+    <h2>נהניתם? פרגנו לנו! ⭐</h2>
+    <p style="color: #aaa; margin: 5px 0 15px;">המשוב שלכם עוזר לנו להשתפר תמיד.</p>
+    <div class="static-stars" id="main-stars">
+        <span class="static-star" onclick="window.handleRating(1)">★</span>
+        <span class="static-star" onclick="window.handleRating(2)">★</span>
+        <span class="static-star" onclick="window.handleRating(3)">★</span>
+        <span class="static-star" onclick="window.handleRating(4)">★</span>
+        <span class="static-star" onclick="window.handleRating(5)">★</span>
+    </div>
 </div>
 
-<div class="rating-overlay" id="ratingOverlay">
-    <div class="rating-box">
-        <div style="text-align: left; cursor: pointer; margin-bottom: 10px;" onclick="window.closeRating()">✕</div>
-        <h3>איך הייתה החוויה שלכם? 🍸</h3>
-        <div class="stars" id="starContainer">
-            <span class="star" data-v="1">★</span>
-            <span class="star" data-v="2">★</span>
-            <span class="star" data-v="3">★</span>
-            <span class="star" data-v="4">★</span>
-            <span class="star" data-v="5">★</span>
+<footer class="footer-disclaimer">
+    <h2 style="color:var(--primary-orange); margin-bottom: 5px; font-weight: 800;">HEVRES BAR</h2>
+    <p>עפולה</p>
+    <p style="margin-top: 20px; font-weight: bold; color: #444;">* כל התמונות באתר הן להמחשה בלבד</p>
+</footer>
+
+<div id="item-modal" class="modal-overlay" style="display: none;" onclick="if(event.target == this) closeItemModal()">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeItemModal()">&times;</span>
+        <div id="modal-item-image" class="large-item-image"></div>
+        <div class="disclaimer-text" style="font-size:0.7rem; color:#666; padding: 6px 20px 0 0; text-align: right;">* התמונה להמחשה בלבד</div>
+        <div class="modal-body">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 0;">
+                <h2 id="modal-item-name" style="margin:0; font-size: 1.35rem; font-weight: 800;"></h2>
+                <span id="modal-item-price" style="color:var(--primary-orange); font-size:1.35rem; font-weight:800;"></span>
+            </div>
+            <p id="modal-item-desc" style="color: #ccc; text-align: right; margin: 0 0 15px 0; font-size: 0.95rem;"></p>
+            <div class="extras-section" id="modal-extras-section">
+                <h3 style="margin:0 0 10px 0; text-align: right; font-size: 1.1rem; font-weight: 700;">תוספות ושדרוגים:</h3>
+                <div id="modal-item-extras"></div>
+            </div>
+            <button class="btn-submit" onclick="closeItemModal()">חזרה לתפריט</button>
         </div>
-        <div id="feedbackForm" style="display:none;">
-            <textarea id="feedbackMsg" rows="3" placeholder="נשמח לשמוע מה אפשר לשפר..."></textarea>
-            <button onclick="window.sendFeedback()" style="background:var(--primary); color:white; border:none; padding:10px 20px; border-radius:8px; width:100%; cursor:pointer; font-weight:bold;">שלח משוב</button>
+    </div>
+</div>
+
+<div id="feedback-modal" class="modal-overlay" style="display: none;" onclick="if(event.target == this) window.closeFeedbackModal()">
+    <div class="modal-content" style="padding:30px;">
+        <h2 id="feedback-title" style="color:var(--primary-orange); font-weight: 800;">נשמח להשתפר 🛠️</h2>
+        <p id="feedback-desc" style="margin: 5px 0 15px;">איך הייתה החוויה שלכם בחברס?</p>
+        
+        <div id="modal-stars-div" class="static-stars">
+            <span class="static-star modal-s" onclick="window.handleRating(1)">★</span>
+            <span class="static-star modal-s" onclick="window.handleRating(2)">★</span>
+            <span class="static-star modal-s" onclick="window.handleRating(3)">★</span>
+            <span class="static-star modal-s" onclick="window.handleRating(4)">★</span>
+            <span class="static-star modal-s" onclick="window.handleRating(5)">★</span>
         </div>
-        <div id="thankYou" style="display:none; color:var(--accent); font-weight:bold; margin-top: 10px;"></div>
+
+        <div id="feedback-form" class="hidden">
+            <textarea id="feedback-text" rows="3" placeholder="נשמח אם תפרטו כאן מה קרה כדי שנוכל לתקן..."></textarea>
+            <button class="btn-submit" onclick="window.submitFeedback()">שלח משוב ישיר</button>
+        </div>
+        <button onclick="window.closeFeedbackModal()" style="margin-top:20px; background:none; border:none; color:#666; cursor:pointer; font-weight: bold;">סגור חלונית</button>
     </div>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, onSnapshot, doc, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, collection, query, where, onSnapshot, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyDYZxPjSML1gHTTANx0Fp6TlhI5_ookHNU",
@@ -99,109 +170,177 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+    
+    // מזהי קישוריות מותאמים אישית לחברס
+    const B_ID = "hevres";
     const googleLink = "https://search.google.com/local/writereview?placeid=ChIJ7ZiYNuRTHBURotvjTJOhuHs";
 
-    let currentSelectedRating = 0;
-
-    async function saveReviewToFirebase(rating, feedbackText) {
-        try {
-            await addDoc(collection(db, "user_reviews"), {
-                rating: rating,
-                feedback: feedbackText,
-                createdAt: serverTimestamp()
-            });
-            console.log("Review saved to Firebase");
-        } catch (e) {
-            console.error("Error saving review: ", e);
-        }
-    }
-
-    window.openRating = () => { document.getElementById('ratingOverlay').style.display = 'flex'; };
-    window.closeRating = () => { document.getElementById('ratingOverlay').style.display = 'none'; };
-
-    const stars = document.querySelectorAll('.star');
-    stars.forEach(s => {
-        s.onclick = async () => {
-            currentSelectedRating = parseInt(s.dataset.v);
-            stars.forEach((st, i) => st.classList.toggle('active', i < currentSelectedRating));
-
-            if (currentSelectedRating >= 4) {
-                await saveReviewToFirebase(currentSelectedRating, "Positive - Redirected to Google");
-                const msg = document.getElementById('thankYou');
-                msg.innerText = "איזה כיף! מעבירים אתכם לגוגל...";
-                msg.style.display = 'block';
-                document.getElementById('feedbackForm').style.display = 'none';
-                setTimeout(() => { window.open(googleLink, '_blank'); window.closeRating(); }, 1200);
-            } else {
-                document.getElementById('feedbackForm').style.display = 'block';
-                document.getElementById('thankYou').style.display = 'none';
-            }
-        };
+    let allItems = [];
+    const cats = ['ראשונות', 'עיקריות', 'שתייה קלה', 'קוקטיילים'];
+    let userActionCount = 0;
+    
+    // איתחול היסטוריה למניעת יציאה בטעות
+    window.addEventListener('load', () => {
+        if (history.state) history.replaceState(null, "");
+        history.pushState({ page: 'home' }, "");
     });
 
-    window.sendFeedback = async () => {
-        const text = document.getElementById('feedbackMsg').value;
-        if(!text) return alert("נשמח אם תפרטו קצת כדי שנוכל להשתפר");
-        
-        await saveReviewToFirebase(currentSelectedRating, text);
-        
-        document.getElementById('feedbackForm').style.display = 'none';
-        const msg = document.getElementById('thankYou');
-        msg.innerText = "תודה על הכנות, המשוב התקבל.";
-        msg.style.display = 'block';
-        setTimeout(window.closeRating, 2500);
-    };
+    window.addEventListener('click', () => userActionCount++, {passive: true});
 
-    let allItems = [];
-    const preferredOrder = ['Starters', 'Burgers', 'Cocktails', 'Beer'];
-    const categoryNames = {'Starters': 'ראשונות', 'Burgers': 'המבורגרים', 'Cocktails': 'קוקטיילים', 'Beer': 'שתייה קלה'};
-
-    onSnapshot(collection(db, "menu_hevres"), (snap) => {
-        allItems = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    // תיקון קריאת הנתונים: קורא מאוסף "menus" המסונן לפי חברס
+    const q = query(collection(db, "menus"), where("businessId", "==", B_ID));
+    onSnapshot(q, (s) => {
+        allItems = s.docs.map(d => ({ id: d.id, ...d.data() }));
         renderTabs();
-        renderMenu();
+        renderMenuByCategories();
     });
 
     function renderTabs() {
         const container = document.getElementById('categories-container');
         if(!container) return;
-        container.innerHTML = preferredOrder.map(cat => `
-            <button class="cat-btn" id="tab-${cat}" onclick="window.scrollToCategory('${cat}')">${categoryNames[cat]}</button>
+        container.innerHTML = cats.map(c => `
+            <button class="cat-btn" id="tab-${c}" onclick="window.scrollToCategory('${c}')">${c}</button>
         `).join('');
+        updateActiveTab(cats[0]);
     }
 
-    function renderMenu() {
-        const content = document.getElementById('menu-content');
-        if(!content) return;
-        content.innerHTML = preferredOrder.map(cat => {
-            const catItems = allItems.filter(i => i.category === cat && i.isAvailable !== false);
-            if (catItems.length === 0) return '';
-            return `
-                <section id="section-${cat}" class="category-section">
-                    <h2 class="category-title">${categoryNames[cat]}</h2>
-                    <div class="menu-grid">
-                        ${catItems.map(item => `
-                            <div class="menu-item">
-                                <div class="item-info">
-                                    <h3>${item.name}</h3>
-                                    <p>${item.desc || ''}</p>
-                                </div>
-                                <div class="item-price">₪${item.price}</div>
-                            </div>
-                        `).join('')}
-                    </div>
-                </section>
-            `;
-        }).join('');
-    }
-
-    window.scrollToCategory = (cat) => {
-        const el = document.getElementById(`section-${cat}`);
+    window.scrollToCategory = (catName) => {
+        const el = document.getElementById(`section-${catName}`);
         if (el) {
-            const offset = 100;
+            const offset = 90;
             const top = el.getBoundingClientRect().top + window.pageYOffset - offset;
             window.scrollTo({ top, behavior: 'smooth' });
         }
+    };
+
+    function renderMenuByCategories() {
+        const container = document.getElementById('menu-content');
+        if(!container) return;
+        container.innerHTML = cats.map(cat => {
+            const items = allItems.filter(i => i.category === cat && i.isAvailable !== false);
+            if (items.length === 0) return '';
+            return `
+                <div class="category-section" id="section-${cat}">
+                    <div class="category-title">${cat}</div>
+                    <div class="menu-grid">
+                        ${items.map(i => `
+                            <div class="menu-item" onclick="window.openItemDetails('${i.id}')">
+                                <div class="item-content item-info">
+                                    <h3>${i.name}</h3>
+                                    <p>${i.desc || ''}</p>
+                                </div>
+                                <div class="item-price">₪${i.price}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>`;
+        }).join('');
+    }
+
+    window.addEventListener('scroll', () => {
+        let current = "";
+        cats.forEach(cat => {
+            const section = document.getElementById(`section-${cat}`);
+            if (section && pageYOffset >= (section.offsetTop - 130)) current = cat;
+        });
+        if (current) updateActiveTab(current);
+    });
+
+    function updateActiveTab(catName) {
+        document.querySelectorAll('.cat-btn').forEach(btn => btn.classList.toggle('active', btn.id === `tab-${catName}`));
+    }
+
+    /* ניהול מודל מנות והיסטוריית כפתור חזרה פיזי */
+    window.openItemDetails = (id) => {
+        const i = allItems.find(x => x.id === id);
+        if(!i) return;
+
+        history.pushState({ page: 'item' }, ""); // דוחף נקודה להיסטוריית הדפדפן
+
+        document.getElementById('modal-item-name').innerText = i.name;
+        document.getElementById('modal-item-price').innerText = `₪${i.price}`;
+        document.getElementById('modal-item-desc').innerText = i.desc || "חווית בילוי קולינרית מיוחדת בחברס בר עפולה.";
+        
+        const modalImg = document.getElementById('modal-item-image');
+        if (i.imageUrl) {
+            modalImg.style.backgroundImage = `url('${i.imageUrl}')`;
+            modalImg.style.display = 'block';
+        } else {
+            modalImg.style.display = 'none';
+        }
+
+        const sec = document.getElementById('modal-extras-section');
+        if(i.extras && i.extras.length > 0){
+            sec.style.display = 'block';
+            document.getElementById('modal-item-extras').innerHTML = i.extras.map(e => `
+                <div class="extra-item">
+                    <span>${e.name}</span>
+                    <span>+ ₪${e.price}</span>
+                </div>`).join('');
+        } else { 
+            sec.style.display = 'none'; 
+        }
+        
+        document.getElementById('item-modal').setAttribute('style', 'display: grid !important');
+    };
+
+    window.closeItemModal = (fromBack = false) => {
+        document.getElementById('item-modal').setAttribute('style', 'display: none !important');
+        if(!fromBack && history.state?.page === 'item') history.back();
+    };
+
+    window.onpopstate = (event) => {
+        if (document.getElementById('item-modal').style.display.includes('grid')) {
+            window.closeItemModal(true);
+            return;
+        }
+        if (document.getElementById('feedback-modal').style.display.includes('grid')) {
+            window.closeFeedbackModal();
+            return;
+        }
+        // הפעלת מלכודת יציאה (Exit Intent)
+        if (!event.state && userActionCount > 0) {
+            history.pushState({ page: 'home' }, "");
+            window.openExitReview();
+        }
+    };
+
+    /* לוגיקת דירוג ומשובים מסונכרנת לאוסף user_reviews של חברס */
+    window.handleRating = async (rating) => {
+        document.querySelectorAll('.static-star').forEach((s, i) => s.classList.toggle('active', i < rating));
+        document.querySelectorAll('.modal-s').forEach((s, i) => s.classList.toggle('active', i < rating));
+
+        if (rating >= 4) {
+            window.open(googleLink, '_blank');
+            await addDoc(collection(db, "user_reviews"), { businessId: B_ID, rating: rating, feedback: "Positive - Redirected to Google", createdAt: serverTimestamp() });
+            window.closeFeedbackModal();
+        } else {
+            window.lastRating = rating;
+            document.getElementById('feedback-title').innerText = "נשמח להשתפר 🛠️";
+            document.getElementById('feedback-desc').innerText = "מה נוכל לשפר בפעם הבאה?";
+            document.getElementById('modal-stars-div').classList.add('hidden');
+            document.getElementById('feedback-form').classList.remove('hidden');
+            document.getElementById('feedback-modal').setAttribute('style', 'display: grid !important');
+        }
+    };
+
+    window.openExitReview = () => {
+        document.getElementById('feedback-title').innerText = "נהניתם מהתפריט? ✨";
+        document.getElementById('feedback-desc').innerText = "נשמח לדירוג קצר לפני שאתם הולכים:";
+        document.getElementById('modal-stars-div').classList.remove('hidden');
+        document.getElementById('feedback-form').classList.add('hidden');
+        document.getElementById('feedback-modal').setAttribute('style', 'display: grid !important');
+    };
+
+    window.closeFeedbackModal = () => document.getElementById('feedback-modal').setAttribute('style', 'display: none !important');
+
+    window.submitFeedback = async () => {
+        const text = document.getElementById('feedback-text').value;
+        if(!text) return alert("נשמח אם תפרטו קצת בתיבה כדי שנדע מה לשפר...");
+        
+        await addDoc(collection(db, "user_reviews"), { businessId: B_ID, rating: window.lastRating, feedback: text, createdAt: serverTimestamp() });
+        alert("המשוב התקבל, תודה על הכנות שלכם!");
+        window.closeFeedbackModal();
     };
 </script>
 </body>
